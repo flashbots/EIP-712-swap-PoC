@@ -9,10 +9,19 @@ const API_URL = "http://localhost:8080"
 
 const randomColor = () => Math.floor(Math.random()*16777215).toString(16)
 
+const eip712Domain = [
+  { name: "name", type: "string" },
+  { name: "version", type: "string" },
+  { name: "chainId", type: "uint256" },
+  { name: "verifyingContract", type: "address" },
+  { name: "salt", type: "bytes32" },
+];
+
 function App() {
   const { status, connect, account, chainId, ethereum } = useMetaMask()
   const [actionStatus, setActionStatus] = useState<string>()
   const [color, setColor] = useState<string>()
+  const [success, setSuccess] = useState<boolean>()
 
   useEffect(() => {
     async function load() {
@@ -23,23 +32,47 @@ function App() {
     load()
   }, [color])
 
+
   const buyDai = (amount: BigNumber) => {
-    const msgParams = [
-      {
-        type: 'string',
-        name: 'functionName',
-        value: 'swapEthForExactToken'
-      },
-      {
-        type: 'uint256',
-        name: 'value',
-        value: amount._hex
-      },
+    // raw type defs
+    const domain = [
+      { name: "name", type: "string" },
+      { name: "version", type: "string" },
+      { name: "chainId", type: "uint256" },
+      { name: "verifyingContract", type: "address" },
+      { name: "salt", type: "bytes32" },
+    ];
+    const order = [
+      { name: "functionName", type: "string" },
+      { name: "value", type: "uint256" },
     ]
+
+    const domainData = {
+      name: "SonOfASwap",
+      version: "2",
+      chainId,
+      verifyingContract: "0x03CBb3AFf82d2d7f6750b1987a94d75f0ecaf1DC", // TODO: replace
+      salt: "0xf2d857f4a3edcb9b78b4d503bfe733db1e3f6cdc2b7971ee739626c97e86a558" // TODO: replace
+    }
+    const msg = {
+      functionName: "swapEthForExactToken",
+      value: amount._hex,
+    }
+
+    const data = {
+      types: {
+        EIP712Domain: domain,
+        SwapOrder: order,
+      },
+      domain: domainData,
+      primaryType: "SwapOrder",
+      message: msg,
+    }
+
     setActionStatus(`buying ${amount.div(ETH)} DAI...`)
     ethereum.sendAsync({
-      method: "eth_signTypedData",
-      params: [msgParams, ethereum.selectedAddress],
+      method: "eth_signTypedData_v4",
+      params: [ethereum.selectedAddress, JSON.stringify(data)],
       from: ethereum.selectedAddress,
     }, async (err: any, res: any) => {
       if (err) {
@@ -54,10 +87,12 @@ function App() {
         setActionStatus("order signed successfully")
         const payload = {
           signedMessage: res.result,
-          msgParams,
+          data,
         }
         const postResponse = await axios.post(`${API_URL}/uniswap`, payload)
-        console.log("POST response", postResponse)
+        if (postResponse.status === 200) {
+          setSuccess(true)
+        }
       }
     })
   }
@@ -75,7 +110,7 @@ function App() {
           <p><code>{actionStatus}</code></p>
         </div>
       </div>
-      <button onClick={() => buyDai(BigNumber.from(5).mul(ETH))}>Buy 5 DAI</button>
+      <button disabled={success} onClick={() => buyDai(BigNumber.from(5).mul(ETH))}>Buy 5 DAI</button>
     </div>
   );
 }

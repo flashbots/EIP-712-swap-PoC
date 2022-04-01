@@ -24,6 +24,7 @@ contract SonOfASwap {
     bytes32 private constant DOMAIN_SEPARATOR = keccak256(abi.encode(
         EIP712_DOMAIN,
         keccak256("SonOfASwap"),
+        keccak256("2"),
         keccak256("5"),
         chainId,
         sonOfAnAddress,
