@@ -27,7 +27,7 @@ function App() {
     const msgParams = [
       {
         type: 'string',
-        name: 'function',
+        name: 'functionName',
         value: 'swapEthForExactToken'
       },
       {

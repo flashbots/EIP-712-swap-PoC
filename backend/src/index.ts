@@ -2,18 +2,18 @@ import express, {Request, Response} from "express"
 import bodyParser from "body-parser"
 import {SignTypedDataVersion, recoverTypedSignature} from "@metamask/eth-sig-util"
 import cors from "cors"
+import ethers from "ethers"
 
 import { SignedMessageRequest } from "./interfaces";
 
+const PORT = 8080
 const app = express()
     .use(bodyParser.json())
     .use(cors())
-const PORT = 8080; // default port to listen
 
-// define a route handler for the default home page
 app.get("/", (req: Request, res: Response) => {
-    res.send("Hello world!");
-});
+    res.send("Hello world!")
+})
 
 app.post("/uniswap", (req: Request, res: Response) => {
     console.log("UNISWAP ORDER RECEIVED")
@@ -32,10 +32,9 @@ app.post("/uniswap", (req: Request, res: Response) => {
         console.error("__signature recovery failed__", e)
         res.status(400).send()
     }
-
 })
 
 // start the Express server
 app.listen(PORT, () => {
-    console.log( `server started at http://localhost:${ PORT }` );
+    console.log(`server started at http://localhost:${PORT}`)
 });
