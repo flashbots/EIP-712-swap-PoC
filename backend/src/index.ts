@@ -26,7 +26,7 @@ app.post("/uniswap", (req: Request, res: Response) => {
             version: SignTypedDataVersion.V1,
             // TODO: use V4 instead of V1
         })
-        console.log("recovered signature from", recovered)
+        console.log("verified signed message from", recovered)
         res.send({ok: true})
     } catch (e) {
         console.error("__signature recovery failed__", e)

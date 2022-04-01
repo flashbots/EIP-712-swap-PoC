@@ -7,7 +7,7 @@
 
 ## TODO
 
-- [ ] build signed message using EIP-712
+- [x] verify signed message
 - [ ] upgrade signed message type to V4
 - [ ] send to flashbots
 - [ ] write smart contract to decode tx and send to uniswap
