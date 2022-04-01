@@ -92,6 +92,7 @@ function App() {
         const postResponse = await axios.post(`${API_URL}/uniswap`, payload)
         if (postResponse.status === 200) {
           setSuccess(true)
+          setActionStatus(JSON.stringify(postResponse.data))
         }
       }
     })
@@ -107,7 +108,7 @@ function App() {
         <p>{`Address: ${account}`}</p>
         <p>{`Chain: ${chainId}`}</p>
         <div className='box'>
-          <p><code>{actionStatus}</code></p>
+          <p style={{wordWrap: "break-word"}}><code>{actionStatus}</code></p>
         </div>
       </div>
       <button disabled={success} onClick={() => buyDai(BigNumber.from(5).mul(ETH))}>Buy 5 DAI</button>
