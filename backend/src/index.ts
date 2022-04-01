@@ -43,9 +43,9 @@ app.post("/uniswap", async (req: Request, res: Response) => {
 
         // send to smart contract
         const verifySendRes = await swappyContract.verifyAndSend(
-            msgReq.data.message, 
-            recovered, 
-            v, r, s, 
+            msgReq.data.message,
+            recovered,
+            v, r, s,
             {gasPrice: GWEI.mul(13), gasLimit: BigNumber.from(50000)}
         )
         console.log("verify send res", await verifySendRes.wait())
