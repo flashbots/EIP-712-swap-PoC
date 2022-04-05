@@ -9,3 +9,5 @@ Uses strongly-typed signed messages to send "Uniswap orders" to a block builder 
 - [ ] send to flashbots
 - [ ] write smart contract to decode tx and send to uniswap
 
+ ![i think this is how it works](/eip-712-diagram.png)
+ 
