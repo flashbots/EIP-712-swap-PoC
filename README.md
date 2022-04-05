@@ -1,4 +1,4 @@
-# EIP-712 Uniswap PoC
+# EIP-712 swap PoC
 
 Uses strongly-typed signed messages to send "Uniswap orders" to a block builder (e.g. Flashbots).
 
