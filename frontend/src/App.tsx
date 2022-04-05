@@ -79,6 +79,7 @@ function App() {
       }
       else if (!err && !res.error) {
         setActionStatus("order signed successfully")
+        console.log("res", res)
         const payload = {
           signedMessage: res.result,
           data,
@@ -106,7 +107,7 @@ function App() {
           <p style={{wordWrap: "break-word"}}><code>{actionStatus}</code></p>
         </div>
       </div>
-      <button disabled={success || !(status === "connected")} onClick={() => buyDai(BigNumber.from(5).mul(ETH))}>Buy 5 DAI</button>
+      <button disabled={status !== "connected"} onClick={() => buyDai(BigNumber.from(5).mul(ETH))}>Buy 5 DAI</button>
     </div>
   );
 }
