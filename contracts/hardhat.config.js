@@ -28,6 +28,10 @@ module.exports = {
       forking: {
         url: process.env.GOERLI_URL,
       },
-    }
+    },
+    "goerli": {
+      url: process.env.GOERLI_URL,
+      chainId: 5,
+    },
   }
 };

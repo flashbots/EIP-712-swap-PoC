@@ -1,62 +1,79 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
-struct SwapOrder {
-    string functionName;
-    uint256 value;
-}
-
 contract SonOfASwap {
-    string private constant SWAP_ORDER_TYPE = "SwapOrder(string functionName,uint256 value)";
-    string private constant EIP712_DOMAIN = "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract,bytes32 salt)";
-    uint256 constant chainId = 5;
-    bytes32 constant salt = 0xf2d857f4a3edcb9b78b4d503bfe733db1e3f6cdc2b7971ee739626c97e86a558;
-    // this address must be pre-calculated using deployer account
-    address private constant sonOfAnAddress = 0x03CBb3AFf82d2d7f6750b1987a94d75f0ecaf1DC;
-
-    uint256 public status = 0;
+    uint256 public status;
     address private owner;
+    
+    struct EIP712Domain {
+        string name;
+        string version;
+        uint256 chainId;
+        address verifyingContract;
+    }
+    
+    struct SwapOrder {
+        address sender;
+        string functionName;
+        uint256 value;
+    }
+
+    bytes32 private constant EIP712DOMAIN_TYPEHASH = keccak256(
+        "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
+    );
+
+    bytes32 private constant SWAPORDER_TYPEHASH = keccak256(
+        "SwapOrder(address sender,string functionName,uint256 value)"
+    );
+
+    bytes32 private DOMAIN_SEPARATOR;
 
     constructor() {
         owner = msg.sender;
+        status = 0;
+        DOMAIN_SEPARATOR = hash(EIP712Domain({
+            name: 'SonOfASwap',
+            version: '4',
+            chainId: 5,
+            verifyingContract: address(this)
+        }));
     }
 
-    bytes32 private constant DOMAIN_SEPARATOR = keccak256(abi.encode(
-        EIP712_DOMAIN,
-        keccak256("SonOfASwap"),
-        keccak256("2"),
-        keccak256("5"),
-        chainId,
-        sonOfAnAddress,
-        salt
-    ));
-
-    function hashSwap(SwapOrder memory order) private pure returns (bytes32) {
-        return keccak256(abi.encodePacked(
-            "\\x19\\x01",
-            DOMAIN_SEPARATOR,
-            keccak256(abi.encode(
-                SWAP_ORDER_TYPE,
-                order.functionName,
-                order.value
-            ))
+    function hash(EIP712Domain memory eip712Domain) internal pure returns (bytes32) {
+        return keccak256(abi.encode(
+            EIP712DOMAIN_TYPEHASH,
+            keccak256(bytes(eip712Domain.name)),
+            keccak256(bytes(eip712Domain.version)),
+            eip712Domain.chainId,
+            eip712Domain.verifyingContract
         ));
     }
 
-    function verify(SwapOrder memory order, address signer, bytes32 r, bytes32 s, uint8 v) private pure returns (bool) {
-        return signer == ecrecover(hashSwap(order), v, r, s);
+    function hash(SwapOrder memory order) internal pure returns (bytes32) {
+        return keccak256(abi.encode(
+            SWAPORDER_TYPEHASH,
+            order.sender,
+            keccak256(bytes(order.functionName)),
+            order.value
+        ));
     }
 
-    function verifyAndSend(SwapOrder memory order, address sender, uint8 v, bytes32 r, bytes32 s) public {
-        // verify signature
-        require(verify(order, sender, r, s, v), "signature invalid for this sender");
-
-        // parse order params
-        status = order.value; // test
-
-        // this is where we will send order to uniswap
+    function verify(SwapOrder memory order, uint8 v, bytes32 r, bytes32 s) internal view returns (bool) {
+        // Note: we need to use `encodePacked` here instead of `encode`.
+        bytes32 digest = keccak256(abi.encodePacked(
+            "\x19\x01",
+            DOMAIN_SEPARATOR,
+            hash(order)
+        ));
+        return ecrecover(digest, v, r, s) == order.sender;
     }
 
+    function setIfValidSignature(SwapOrder memory order, uint8 v, bytes32 r, bytes32 s) public {
+        require(verify(order, v, r, s), "invalid signature");
+        status = status + 1;
+    }
+
+    // status reset for debugging
     function resetStatus() public {
         require(msg.sender == owner);
         status = 0;

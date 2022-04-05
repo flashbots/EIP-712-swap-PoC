@@ -8,14 +8,7 @@ const ETH = BigNumber.from(1e9).mul(1e9)
 const API_URL = "http://localhost:8080"
 
 const randomColor = () => Math.floor(Math.random()*16777215).toString(16)
-
-const eip712Domain = [
-  { name: "name", type: "string" },
-  { name: "version", type: "string" },
-  { name: "chainId", type: "uint256" },
-  { name: "verifyingContract", type: "address" },
-  { name: "salt", type: "bytes32" },
-];
+const verifyingContract = "0x1258615F6B06af9bA63CE940eEa404a61C3Db567"
 
 function App() {
   const { status, connect, account, chainId, ethereum } = useMetaMask()
@@ -40,34 +33,35 @@ function App() {
       { name: "version", type: "string" },
       { name: "chainId", type: "uint256" },
       { name: "verifyingContract", type: "address" },
-      { name: "salt", type: "bytes32" },
     ];
-    const order = [
+    const swapOrder = [
+      { name: "sender", type: "address" },
       { name: "functionName", type: "string" },
       { name: "value", type: "uint256" },
     ]
 
     const domainData = {
       name: "SonOfASwap",
-      version: "2",
+      version: "4",
       chainId,
-      verifyingContract: "0x03CBb3AFf82d2d7f6750b1987a94d75f0ecaf1DC", // TODO: replace
-      salt: "0xf2d857f4a3edcb9b78b4d503bfe733db1e3f6cdc2b7971ee739626c97e86a558" // TODO: replace
+      verifyingContract,
     }
     const msg = {
+      sender: account,
       functionName: "swapEthForExactToken",
       value: amount._hex,
     }
-
     const data = {
       types: {
         EIP712Domain: domain,
-        SwapOrder: order,
+        SwapOrder: swapOrder,
       },
       domain: domainData,
       primaryType: "SwapOrder",
       message: msg,
     }
+
+    console.log("data", data)
 
     setActionStatus(`buying ${amount.div(ETH)} DAI...`)
     ethereum.sendAsync({
@@ -107,11 +101,12 @@ function App() {
         <p>{`Wallet ${status}`}</p>
         <p>{`Address: ${account}`}</p>
         <p>{`Chain: ${chainId}`}</p>
+        <p>Verifier: <a href={`https://goerli.etherscan.io/address/${verifyingContract}`}>{verifyingContract}</a></p>
         <div className='box'>
           <p style={{wordWrap: "break-word"}}><code>{actionStatus}</code></p>
         </div>
       </div>
-      <button disabled={success} onClick={() => buyDai(BigNumber.from(5).mul(ETH))}>Buy 5 DAI</button>
+      <button disabled={success || !(status === "connected")} onClick={() => buyDai(BigNumber.from(5).mul(ETH))}>Buy 5 DAI</button>
     </div>
   );
 }

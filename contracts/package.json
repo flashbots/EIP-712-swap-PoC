@@ -10,5 +10,9 @@
   },
   "dependencies": {
     "dotenv": "^16.0.0"
+  },
+  "scripts": {
+    "deploy-goerli": "npx hardhat run --network goerli scripts/deploy.js",
+    "fake-deploy": "npx hardhat run scripts/deploy.js"
   }
 }
