@@ -13,6 +13,7 @@
   },
   "scripts": {
     "deploy-goerli": "npx hardhat run --network goerli scripts/deploy.js",
+    "deploy-local": "npx hardhat run --network local scripts/deploy.js",
     "fake-deploy": "npx hardhat run scripts/deploy.js"
   }
 }

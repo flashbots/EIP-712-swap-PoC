@@ -16,8 +16,9 @@ const app = express()
     .use(bodyParser.json())
     .use(cors())
 const provider = new providers.JsonRpcProvider(process.env.RPC_URL, 5)
+// const provider = new providers.JsonRpcProvider("http://localhost:8545", 31337)
 const signer = new Wallet(process.env.SIGNER_KEY || "", provider)
-const swappyContract = new Contract("0x1258615F6B06af9bA63CE940eEa404a61C3Db567", swapAbi, signer)
+const swappyContract = new Contract("0x0F7c506dFc30aDaBa37B08f9a9c550e715cb5bAA", swapAbi, signer)
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Hello world!")
@@ -36,18 +37,21 @@ app.post("/uniswap", async (req: Request, res: Response) => {
         console.log("verified signed message from", recovered)
 
         // parse (r,s,v)
-        const signature = msgReq.signedMessage.substring(2);
-        const r = "0x" + signature.substring(0, 64);
-        const s = "0x" + signature.substring(64, 128);
-        const v = parseInt(signature.substring(128, 130), 16);
+        const signature = msgReq.signedMessage.substring(2)
+        const r = "0x" + signature.substring(0, 64)
+        const s = "0x" + signature.substring(64, 128)
+        const v = parseInt(signature.substring(128, 130), 16)
 
         try {
             // send to smart contract
-            console.log("SENDING THIS TO SMART CONTRACT", msgReq.data.message)
+            console.log("order", msgReq.data.message)
+            console.log("v", v)
+            console.log("r", r)
+            console.log("s", s)
             const verifySendRes = await swappyContract.setIfValidSignature(
                 msgReq.data.message,
                 v, r, s,
-                {gasPrice: GWEI.mul(13), gasLimit: BigNumber.from(40000)}
+                {gasPrice: GWEI.mul(13), gasLimit: BigNumber.from(69000)}
             )
             console.log("verify send response", verifySendRes)
             console.log("verify send result", await verifySendRes.wait())

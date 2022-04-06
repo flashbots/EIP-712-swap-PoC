@@ -29,6 +29,10 @@ module.exports = {
         url: process.env.GOERLI_URL,
       },
     },
+    "local": {
+      url: "http://localhost:8545",
+      chainId: 31337,
+    },
     "goerli": {
       url: process.env.GOERLI_URL,
       chainId: 5,

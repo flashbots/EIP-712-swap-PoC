@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import './App.css'
-import { BigNumber } from 'ethers';
-import { useMetaMask } from "metamask-react";
+import { BigNumber } from 'ethers'
+import { useMetaMask } from "metamask-react"
 import axios from "axios"
+import { Contract, providers } from "ethers"
+import ABI from "./sonOfASwap.json"
 
 const ETH = BigNumber.from(1e9).mul(1e9)
 const API_URL = "http://localhost:8080"
 
 const randomColor = () => Math.floor(Math.random()*16777215).toString(16)
-const verifyingContract = "0x1258615F6B06af9bA63CE940eEa404a61C3Db567"
+const verifyingContract = "0x0F7c506dFc30aDaBa37B08f9a9c550e715cb5bAA"
 
 function App() {
   const { status, connect, account, chainId, ethereum } = useMetaMask()
   const [actionStatus, setActionStatus] = useState<string>()
   const [color, setColor] = useState<string>()
   const [success, setSuccess] = useState<boolean>()
+  
+  const provider = providers.getDefaultProvider(5)
+  const swappyContract = new Contract(verifyingContract, ABI, provider)
 
   useEffect(() => {
     async function load() {
@@ -22,6 +27,7 @@ function App() {
         setColor(`#${randomColor()}`)
       }
     }
+    console.log("ethereum", ethereum)
     load()
   }, [color])
 
@@ -42,7 +48,7 @@ function App() {
 
     const domainData = {
       name: "SonOfASwap",
-      version: "4",
+      version: "1",
       chainId,
       verifyingContract,
     }
@@ -93,6 +99,12 @@ function App() {
     })
   }
 
+  const getContractStatus = async () => {
+    const res = await swappyContract.status()
+    console.log(res)
+    alert(res.toString())
+  }
+
   return (
     <div className="App" style={{backgroundColor: color}}>
       {status === "notConnected" && <div className="box right">
@@ -103,6 +115,7 @@ function App() {
         <p>{`Address: ${account}`}</p>
         <p>{`Chain: ${chainId}`}</p>
         <p>Verifier: <a href={`https://goerli.etherscan.io/address/${verifyingContract}`}>{verifyingContract}</a></p>
+        <button onClick={getContractStatus}>Get contract status</button>
         <div className='box'>
           <p style={{wordWrap: "break-word"}}><code>{actionStatus}</code></p>
         </div>

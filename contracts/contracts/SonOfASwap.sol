@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
+struct SwapOrder {
+    address sender;
+    string functionName; // TODO: be enum
+    uint256 value;
+}
+
 contract SonOfASwap {
     uint256 public status;
     address private owner;
@@ -12,36 +18,36 @@ contract SonOfASwap {
         address verifyingContract;
     }
     
-    struct SwapOrder {
-        address sender;
-        string functionName;
-        uint256 value;
-    }
+    string private constant EIP712_DOMAIN = "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)";
+    string private constant SWAPORDER = "SwapOrder(address sender,string functionName,uint256 value)";
 
-    bytes32 private constant EIP712DOMAIN_TYPEHASH = keccak256(
-        "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
-    );
-
-    bytes32 private constant SWAPORDER_TYPEHASH = keccak256(
-        "SwapOrder(address sender,string functionName,uint256 value)"
-    );
+    bytes32 private constant EIP712_DOMAIN_TYPEHASH = keccak256(abi.encodePacked(EIP712_DOMAIN));
+    bytes32 private constant SWAPORDER_TYPEHASH = keccak256(abi.encodePacked(SWAPORDER));
 
     bytes32 private DOMAIN_SEPARATOR;
+
+    function getChainID() internal view returns (uint256) {
+        uint256 id;
+        assembly {
+            id := chainid()
+        }
+        return id;
+    }
 
     constructor() {
         owner = msg.sender;
         status = 0;
         DOMAIN_SEPARATOR = hash(EIP712Domain({
             name: 'SonOfASwap',
-            version: '4',
-            chainId: 5,
+            version: '1',
+            chainId: getChainID(),
             verifyingContract: address(this)
         }));
     }
 
     function hash(EIP712Domain memory eip712Domain) internal pure returns (bytes32) {
         return keccak256(abi.encode(
-            EIP712DOMAIN_TYPEHASH,
+            EIP712_DOMAIN_TYPEHASH,
             keccak256(bytes(eip712Domain.name)),
             keccak256(bytes(eip712Domain.version)),
             eip712Domain.chainId,
@@ -65,7 +71,8 @@ contract SonOfASwap {
             DOMAIN_SEPARATOR,
             hash(order)
         ));
-        return ecrecover(digest, v, r, s) == order.sender;
+        address recovered = ecrecover(digest, v, r, s);
+        return recovered == order.sender;
     }
 
     function setIfValidSignature(SwapOrder memory order, uint8 v, bytes32 r, bytes32 s) public {
