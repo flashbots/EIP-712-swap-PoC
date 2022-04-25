@@ -15,22 +15,10 @@ const verifyingContract = "0x0F7c506dFc30aDaBa37B08f9a9c550e715cb5bAA"
 function App() {
   const { status, connect, account, chainId, ethereum } = useMetaMask()
   const [actionStatus, setActionStatus] = useState<string>()
-  const [color, setColor] = useState<string>()
   const [success, setSuccess] = useState<boolean>()
   
   const provider = providers.getDefaultProvider(5)
   const swappyContract = new Contract(verifyingContract, ABI, provider)
-
-  useEffect(() => {
-    async function load() {
-      if (!color) {
-        setColor(`#${randomColor()}`)
-      }
-    }
-    console.log("ethereum", ethereum)
-    load()
-  }, [color])
-
 
   const buyDai = (amount: BigNumber) => {
     // raw type defs
@@ -106,7 +94,7 @@ function App() {
   }
 
   return (
-    <div className="App" style={{backgroundColor: color}}>
+    <div className="App" style={{backgroundColor: "#bfffd0"}}>
       {status === "notConnected" && <div className="box right">
         <button onClick={() => connect()}>Connect Wallet</button>
       </div>}
