@@ -21,38 +21,32 @@ function App() {
   const swappyContract = new Contract(verifyingContract, ABI, provider)
 
   const buyDai = (amount: BigNumber) => {
-    // raw type defs
-    const domain = [
-      { name: "name", type: "string" },
-      { name: "version", type: "string" },
-      { name: "chainId", type: "uint256" },
-      { name: "verifyingContract", type: "address" },
-    ];
-    const swapOrder = [
-      { name: "sender", type: "address" },
-      { name: "functionName", type: "string" },
-      { name: "value", type: "uint256" },
-    ]
-
-    const domainData = {
-      name: "SonOfASwap",
-      version: "1",
-      chainId,
-      verifyingContract,
-    }
-    const msg = {
-      sender: account,
-      functionName: "swapEthForExactToken",
-      value: amount._hex,
-    }
     const data = {
       types: {
-        EIP712Domain: domain,
-        SwapOrder: swapOrder,
+        EIP712Domain: [
+          { name: "name", type: "string" },
+          { name: "version", type: "string" },
+          { name: "chainId", type: "uint256" },
+          { name: "verifyingContract", type: "address" },
+        ],
+        SwapOrder: [
+          { name: "sender", type: "address" },
+          { name: "functionName", type: "string" },
+          { name: "value", type: "uint256" },
+        ],
       },
-      domain: domainData,
+      domain: {
+        name: "SonOfASwap",
+        version: "1",
+        chainId,
+        verifyingContract,
+      },
       primaryType: "SwapOrder",
-      message: msg,
+      message: {
+        sender: account,
+        functionName: "swapEthForExactToken",
+        value: amount._hex,
+      },
     }
 
     console.log("data", data)
