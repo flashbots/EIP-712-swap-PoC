@@ -9,7 +9,6 @@ import ABI from "./sonOfASwap.json"
 const ETH = BigNumber.from(1e9).mul(1e9)
 const API_URL = "http://localhost:8080"
 
-const randomColor = () => Math.floor(Math.random()*16777215).toString(16)
 const verifyingContract = "0x0F7c506dFc30aDaBa37B08f9a9c550e715cb5bAA"
 
 function App() {
