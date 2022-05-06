@@ -9,7 +9,7 @@ import ABI from "./sonOfASwap.json"
 const ETH = BigNumber.from(1e9).mul(1e9)
 const API_URL = "http://localhost:8080"
 
-const verifyingContract = "0xe19e68880300cA7Bae0D79c300d3567f67cD686F"
+const verifyingContract = "0xcDeC2Ca988cc42B65Cb8Ca161B3b25d36D7fB459"
 const DAI_ADDRESS = "0x587B3c7D9E252eFFB9C857eF4c936e2072b741a4"
 const WETH_ADDRESS = "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"
 

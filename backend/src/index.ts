@@ -18,7 +18,7 @@ const app = express()
 const provider = new providers.JsonRpcProvider(process.env.RPC_URL, 5)
 // const provider = new providers.JsonRpcProvider("http://localhost:8545", 31337)
 const signer = new Wallet(process.env.SIGNER_KEY || "", provider)
-const swappyContract = new Contract("0xe19e68880300cA7Bae0D79c300d3567f67cD686F", swapAbi, signer)
+const swappyContract = new Contract("0xcDeC2Ca988cc42B65Cb8Ca161B3b25d36D7fB459", swapAbi, signer)
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Hello world!")

@@ -61,24 +61,6 @@ contract SonOfASwap {
         ));
     }
 
-    function hash(address[] memory path) internal pure returns (bytes32) {
-        string memory pathTypeHash = "(";
-        for (uint8 i = 0; i < path.length; ++i) {
-            pathTypeHash = string(abi.encodePacked(pathTypeHash, "address a", i));
-            if (i < path.length - 1) {
-                pathTypeHash = string(abi.encodePacked(pathTypeHash, ","));
-            }
-        }
-        // "(address,address,...)"
-        pathTypeHash = string(abi.encodePacked(pathTypeHash, ")"));
-        
-        // hash path according to above-generated type hash
-        return keccak256(abi.encode(
-            keccak256(abi.encodePacked((pathTypeHash))),
-            path
-        ));
-    }
-
     function hash(SwapOrder memory order) internal pure returns (bytes32) {
         return keccak256(abi.encode(
             SWAPORDER_TYPEHASH,
@@ -86,7 +68,7 @@ contract SonOfASwap {
             order.amountOut,
             keccak256(bytes(order.tradeType)),
             order.recipient,
-            hash(order.path), // TODO: array values are encoded as the keccak256 hash of the concatenated encodeData of their contents
+            keccak256(abi.encodePacked(order.path)),
             order.deadline,
             order.sqrtPriceLimitX96,
             order.fee
