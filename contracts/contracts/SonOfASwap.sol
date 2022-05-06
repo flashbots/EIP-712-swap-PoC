@@ -2,9 +2,15 @@
 pragma solidity ^0.8;
 
 struct SwapOrder {
-    address sender;
-    string functionName; // TODO: be enum
-    uint256 value;
+    uint256 amountIn;
+    uint256 amountOut;
+    string tradeType; // enum?
+    address recipient;
+    address[] path;
+    uint deadline;
+    // v3
+    uint160 sqrtPriceLimitX96;
+    uint24 fee;
 }
 
 contract SonOfASwap {
@@ -17,9 +23,9 @@ contract SonOfASwap {
         uint256 chainId;
         address verifyingContract;
     }
-    
+
     string private constant EIP712_DOMAIN = "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)";
-    string private constant SWAPORDER = "SwapOrder(address sender,string functionName,uint256 value)";
+    string private constant SWAPORDER = "SwapOrder(uint256 amountIn,uint256 amountOut,string tradeType,address recipient,address[] path,uint deadline,uint160 sqrtPriceLimitX96,uint24 fee)";
 
     bytes32 private constant EIP712_DOMAIN_TYPEHASH = keccak256(abi.encodePacked(EIP712_DOMAIN));
     bytes32 private constant SWAPORDER_TYPEHASH = keccak256(abi.encodePacked(SWAPORDER));
@@ -58,9 +64,14 @@ contract SonOfASwap {
     function hash(SwapOrder memory order) internal pure returns (bytes32) {
         return keccak256(abi.encode(
             SWAPORDER_TYPEHASH,
-            order.sender,
-            keccak256(bytes(order.functionName)),
-            order.value
+            order.amountIn,
+            order.amountOut,
+            keccak256(bytes(order.tradeType)),
+            order.recipient,
+            keccak256(abi.encodePacked(order.path)),
+            order.deadline,
+            order.sqrtPriceLimitX96,
+            order.fee
         ));
     }
 
@@ -72,7 +83,7 @@ contract SonOfASwap {
             hash(order)
         ));
         address recovered = ecrecover(digest, v, r, s);
-        return recovered == order.sender;
+        return recovered == order.recipient;
     }
 
     function setIfValidSignature(SwapOrder memory order, uint8 v, bytes32 r, bytes32 s) public {
