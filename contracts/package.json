@@ -12,8 +12,9 @@
     "dotenv": "^16.0.0"
   },
   "scripts": {
-    "deploy-goerli": "npx hardhat run --network goerli scripts/deploy.js",
-    "deploy-local": "npx hardhat run --network local scripts/deploy.js",
-    "fake-deploy": "npx hardhat run scripts/deploy.js"
+    "copy-abi": "ABI=$(cat artifacts/contracts/SonOfASwap.sol/SonOfASwap.json | jq .abi) && echo $ABI > ../backend/src/abi/sonOfASwap.json && echo $ABI > ../frontend/src/sonOfASwap.json",
+    "deploy-goerli": "npx hardhat run --network goerli scripts/deploy.js && yarn copy-abi",
+    "deploy-local": "npx hardhat run --network local scripts/deploy.js && yarn copy-abi",
+    "fake-deploy": "npx hardhat run scripts/deploy.js && yarn copy-abi"
   }
 }
