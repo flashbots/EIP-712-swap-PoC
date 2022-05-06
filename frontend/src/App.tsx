@@ -9,15 +9,17 @@ import ABI from "./sonOfASwap.json"
 const ETH = BigNumber.from(1e9).mul(1e9)
 const API_URL = "http://localhost:8080"
 
-const verifyingContract = "0x0F7c506dFc30aDaBa37B08f9a9c550e715cb5bAA"
+const verifyingContract = "0xe19e68880300cA7Bae0D79c300d3567f67cD686F"
+const DAI_ADDRESS = "0x587B3c7D9E252eFFB9C857eF4c936e2072b741a4"
+const WETH_ADDRESS = "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"
+
+const provider = providers.getDefaultProvider(5)
+const swappyContract = new Contract(verifyingContract, ABI, provider)
 
 function App() {
   const { status, connect, account, chainId, ethereum } = useMetaMask()
   const [actionStatus, setActionStatus] = useState<string>()
   const [success, setSuccess] = useState<boolean>()
-  
-  const provider = providers.getDefaultProvider(5)
-  const swappyContract = new Contract(verifyingContract, ABI, provider)
 
   const buyDai = (amount: BigNumber) => {
     const data = {
@@ -29,9 +31,14 @@ function App() {
           { name: "verifyingContract", type: "address" },
         ],
         SwapOrder: [
-          { name: "sender", type: "address" },
-          { name: "functionName", type: "string" },
-          { name: "value", type: "uint256" },
+          { name: "amountIn", type: "uint256"},
+          { name: "amountOut", type: "uint256"},
+          { name: "tradeType", type: "string"},
+          { name: "recipient", type: "address"},
+          { name: "path", type: "address[]"},
+          { name: "deadline", type: "uint"},
+          { name: "sqrtPriceLimitX96", type: "uint160"},
+          { name: "fee", type: "uint24"},
         ],
       },
       domain: {
@@ -42,9 +49,14 @@ function App() {
       },
       primaryType: "SwapOrder",
       message: {
-        sender: account,
-        functionName: "swapEthForExactToken",
-        value: amount._hex,
+        amountIn: amount._hex,
+        amountOut: (amount.mul(3000))._hex, // 3000 DAI/ETH
+        tradeType: "EXACT_INPUT_SINGLE_V3",
+        recipient: account,
+        path: [WETH_ADDRESS, DAI_ADDRESS],
+        deadline: BigNumber.from(Math.floor((Date.now() + 30 * 60 * 1000) / 1000))._hex, // 30 min from now
+        sqrtPriceLimitX96: 0x0,
+        fee: 0x0,
       },
     }
 
