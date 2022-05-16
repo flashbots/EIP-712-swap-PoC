@@ -18,7 +18,7 @@ const app = express()
 const provider = new providers.JsonRpcProvider(process.env.RPC_URL, 5)
 // const provider = new providers.JsonRpcProvider("http://localhost:8545", 31337)
 const signer = new Wallet(process.env.SIGNER_KEY || "", provider)
-const swappyContract = new Contract("0xcDeC2Ca988cc42B65Cb8Ca161B3b25d36D7fB459", swapAbi, signer)
+const swappyContract = new Contract("0x99D72ccAa651EEdf7Ece658c1f8aAa7f3f9778B2", swapAbi, signer)
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Hello world!")
@@ -48,18 +48,20 @@ app.post("/uniswap", async (req: Request, res: Response) => {
             console.log("v", v)
             console.log("r", r)
             console.log("s", s)
-            const verifySendRes = await swappyContract.setIfValidSignature(
+            const verifySendRes = await swappyContract.verifyAndSend(
                 msgReq.data.message,
                 v, r, s,
-                {gasPrice: GWEI.mul(13), gasLimit: BigNumber.from(69000)}
+                {gasPrice: GWEI.mul(13), gasLimit: BigNumber.from(169000)}
             )
             console.log("verify send response", verifySendRes)
             console.log("verify send result", await verifySendRes.wait())
+            res.send(verifySendRes.hash)
         } catch (e) {
             console.error(e)
+            res.sendStatus(400)
         }
 
-        res.send({v,r,s})
+
     } catch (e) {
         console.error("__signature recovery failed__", e)
         res.status(400).send()

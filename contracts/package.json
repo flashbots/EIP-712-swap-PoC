@@ -9,6 +9,8 @@
     "hardhat": "^2.9.2"
   },
   "dependencies": {
+    "@openzeppelin/contracts": "^4.6.0",
+    "@uniswap/v3-periphery": "^1.4.1",
     "dotenv": "^16.0.0"
   },
   "scripts": {

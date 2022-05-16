@@ -9,9 +9,9 @@ import ABI from "./sonOfASwap.json"
 const ETH = BigNumber.from(1e9).mul(1e9)
 const API_URL = "http://localhost:8080"
 
-const verifyingContract = "0xcDeC2Ca988cc42B65Cb8Ca161B3b25d36D7fB459"
-const DAI_ADDRESS = "0x587B3c7D9E252eFFB9C857eF4c936e2072b741a4"
+const verifyingContract = "0x99D72ccAa651EEdf7Ece658c1f8aAa7f3f9778B2"
 const WETH_ADDRESS = "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"
+const UNI_ADDRESS = "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984"
 
 const provider = providers.getDefaultProvider(5)
 const swappyContract = new Contract(verifyingContract, ABI, provider)
@@ -31,6 +31,7 @@ function App() {
           { name: "verifyingContract", type: "address" },
         ],
         SwapOrder: [
+          { name: "router", type: "address" },
           { name: "amountIn", type: "uint256"},
           { name: "amountOut", type: "uint256"},
           { name: "tradeType", type: "string"},
@@ -49,20 +50,21 @@ function App() {
       },
       primaryType: "SwapOrder",
       message: {
+        router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
         amountIn: amount._hex,
-        amountOut: (amount.mul(3000))._hex, // 3000 DAI/ETH
-        tradeType: "EXACT_INPUT_SINGLE_V3",
+        amountOut: "0x42",
+        tradeType: "v3_exactInputSingle",
         recipient: account,
-        path: [WETH_ADDRESS, DAI_ADDRESS],
-        deadline: BigNumber.from(Math.floor((Date.now() + 30 * 60 * 1000) / 1000))._hex, // 30 min from now
-        sqrtPriceLimitX96: 0x0,
-        fee: 0x0,
+        path: [WETH_ADDRESS, UNI_ADDRESS],
+        deadline: BigNumber.from(Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13)._hex, // 30 min from now
+        sqrtPriceLimitX96: "0x0",
+        fee: "0x0",
       },
     }
 
     console.log("data", data)
 
-    setActionStatus(`buying ${amount.div(ETH)} DAI...`)
+    setActionStatus(`buying ${amount} UNI...`)
     ethereum.sendAsync({
       method: "eth_signTypedData_v4",
       params: [ethereum.selectedAddress, JSON.stringify(data)],
@@ -78,15 +80,20 @@ function App() {
       }
       else if (!err && !res.error) {
         setActionStatus("order signed successfully")
-        console.log("res", res)
+        console.log("*!*!* res", res);
         const payload = {
           signedMessage: res.result,
           data,
         }
-        const postResponse = await axios.post(`${API_URL}/uniswap`, payload)
-        if (postResponse.status === 200) {
-          setSuccess(true)
-          setActionStatus(JSON.stringify(postResponse.data))
+        try {
+          const postResponse = await axios.post(`${API_URL}/uniswap`, payload)
+          if (postResponse.status === 200) {
+            setSuccess(true)
+            setActionStatus(JSON.stringify(postResponse.data))
+          }
+        } catch (e) {
+          setSuccess(false)
+          setActionStatus(`Tx failed. ${JSON.stringify(e)}`)
         }
       }
     })
@@ -113,7 +120,7 @@ function App() {
           <p style={{wordWrap: "break-word"}}><code>{actionStatus}</code></p>
         </div>
       </div>
-      <button disabled={status !== "connected"} onClick={() => buyDai(BigNumber.from(5).mul(ETH))}>Buy 5 DAI</button>
+      <button disabled={status !== "connected"} onClick={() => buyDai(BigNumber.from(1).mul(ETH).div(10))}>Buy 0.1 ETH worth of UNI</button>
     </div>
   );
 }
