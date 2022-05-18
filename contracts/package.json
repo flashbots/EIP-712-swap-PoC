@@ -21,8 +21,8 @@
     "copy-goerli-abi": "ABI=$(cat deployments/goerli_5/SonOfASwap.json | jq .abi) && echo $ABI > ../backend/src/abi/sonOfASwap.json && echo $ABI > ../frontend/src/abi/sonOfASwap.json",
     "copy-goerli-address": "ADDR=$(cat deployments/goerli_5/SonOfASwap.json | jq .address) && echo \"{\\\"address\\\": $ADDR}\" > contract.json && cat contract.json && cp contract.json ../frontend/src/",
     "deploy-goerli": "npx hardhat run --network goerli scripts/deploy.js && yarn copy-goerli-abi && yarn copy-goerli-address",
-    "copy-local-abi": "ABI=$(cat deployments/local_5/SonOfASwap.json | jq .abi) && echo $ABI > ../backend/src/abi/sonOfASwap.json && echo $ABI > ../frontend/src/abi/sonOfASwap.json",
-    "copy-local-address": "ADDR=$(cat deployments/local_5/SonOfASwap.json | jq .address) && echo \"{\\\"address\\\": $ADDR}\" > contract.json && cat contract.json && cp contract.json ../frontend/src/",
+    "copy-local-abi": "ABI=$(cat $(ls -t deployments/local* | head -n 1 | cut -d':' -f 1)/SonOfASwap.json | jq .abi) && echo $ABI > ../backend/src/abi/sonOfASwap.json && echo $ABI > ../frontend/src/abi/sonOfASwap.json",
+    "copy-local-address": "ADDR=$(cat $(ls -t deployments/local* | head -n 1 | cut -d':' -f 1)/SonOfASwap.json | jq .address) && echo \"{\\\"address\\\": $ADDR}\" > contract.json && cat contract.json && cp contract.json ../frontend/src/",
     "deploy-local": "npx hardhat run --network local scripts/deploy.js && yarn copy-local-abi && yarn copy-local-address",    
     "fake-deploy": "npx hardhat run scripts/deploy.js && yarn copy-abi"
   }
