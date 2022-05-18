@@ -16,7 +16,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "address": "cat deployments/goerli_5/SonOfASwap.json | jq .address",
+    "address": "cat $(ls -t deployments/* | head -n 1 | cut -d':' -f 1)/SonOfASwap.json | jq .address",
     "localnode": "npx hardhat node --port 8599",
     "copy-goerli-abi": "ABI=$(cat deployments/goerli_5/SonOfASwap.json | jq .abi) && echo $ABI > ../backend/src/abi/sonOfASwap.json && echo $ABI > ../frontend/src/abi/sonOfASwap.json",
     "copy-goerli-address": "ADDR=$(cat deployments/goerli_5/SonOfASwap.json | jq .address) && echo \"{\\\"address\\\": $ADDR}\" > contract.json && cat contract.json && cp contract.json ../frontend/src/",
