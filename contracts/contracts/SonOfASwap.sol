@@ -131,37 +131,43 @@ contract SonOfASwap {
 
         // transfer input token from user to (this)
         tokenIn.transferFrom(order.recipient, address(this), order.amountIn);
+        // approve router to spend (this) tokenIn
+        tokenIn.approve(order.router, order.amountIn);
 
         // choose router method based on order type
-        // if (stringsEqual(order.tradeType, "v3_exactInputSingle")) {
-        //     // encode function params based on order
-        //     ISwapRouter.ExactInputSingleParams memory params = ISwapRouter
-        //         .ExactInputSingleParams(
-        //             order.path[0], // tokenIn
-        //             order.path[1], // tokenOut
-        //             order.fee, // fee
-        //             order.recipient, // recipient
-        //             order.deadline, // deadline
-        //             order.amountIn, // amountIn
-        //             order.amountOut, // amountOutMinimum
-        //             order.sqrtPriceLimitX96 // sqrtPriceLimitX96
-        //         );
-        //     emit ExactInputSingleSwap(order.recipient);
-        //     // send order to router
-        //     router.exactInputSingle(params);
-        // } else if (stringsEqual(order.tradeType, "v3_exactOutputSingle")) {
-        //     // router.exactOutputSingle(params);
-        //     revert("unimplemented");
-        // } else if (stringsEqual(order.tradeType, "v3_exactInput")) {
-        //     // router.exactInput(params);
-        //     revert("unimplemented");
-        // } else if (stringsEqual(order.tradeType, "v3_exactOutput")) {
-        //     // router.exactOutput(params);
-        //     revert("unimplemented");
-        // } else {
-        //     // TODO: v2; ignore for now
-        //     revert("unimplemented");
-        // }
+        if (stringsEqual(order.tradeType, "v3_exactInputSingle")) {
+            // encode function params based on order
+            ISwapRouter.ExactInputSingleParams memory params = ISwapRouter
+                .ExactInputSingleParams(
+                    order.path[0], // tokenIn
+                    order.path[1], // tokenOut
+                    order.fee, // fee
+                    order.recipient, // recipient
+                    order.deadline, // deadline
+                    order.amountIn, // amountIn
+                    order.amountOut, // amountOutMinimum
+                    order.sqrtPriceLimitX96 // sqrtPriceLimitX96
+                );
+            emit ExactInputSingleSwap(order.recipient);
+
+            // send order to router
+            uint256 amountOutActual = router.exactInputSingle{value: 0x0}(
+                params
+            );
+            status = amountOutActual;
+        } else if (stringsEqual(order.tradeType, "v3_exactOutputSingle")) {
+            // router.exactOutputSingle(params);
+            revert("unimplemented");
+        } else if (stringsEqual(order.tradeType, "v3_exactInput")) {
+            // router.exactInput(params);
+            revert("unimplemented");
+        } else if (stringsEqual(order.tradeType, "v3_exactOutput")) {
+            // router.exactOutput(params);
+            revert("unimplemented");
+        } else {
+            // TODO: v2; ignore for now
+            revert("unimplemented");
+        }
     }
 
     function verifyAndSend(

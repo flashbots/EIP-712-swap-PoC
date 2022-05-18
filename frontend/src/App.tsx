@@ -1,27 +1,49 @@
 import React, { useEffect, useState } from 'react'
 import './App.css'
-import { BigNumber } from 'ethers'
+import { BigNumber, Contract, providers } from 'ethers'
 import { useMetaMask } from "metamask-react"
 import axios from "axios"
-import { Contract, providers } from "ethers"
-import ABI from "./sonOfASwap.json"
+import ERC20_ABI from "./abi/erc20.json"
+import VALIDATOR_ABI from "./abi/sonOfASwap.json"
+import validatorDeployment from "./contract.json"
 
 const ETH = BigNumber.from(1e9).mul(1e9)
 const API_URL = "http://localhost:8080"
 
-const verifyingContract = "0x99D72ccAa651EEdf7Ece658c1f8aAa7f3f9778B2"
-const WETH_ADDRESS = "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"
-const UNI_ADDRESS = "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984"
+const verifyingContractAddress = validatorDeployment.address
+const TOKEN_IN_ADDRESS = "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6" //  WETH
+const TOKEN_OUT_ADDRESS = "0x7ebC3778cF08f636805D9382D6c16e79ed9F370E" // test ERC20
+const TOKEN_IN_NAME = "WETH"
+const TOKEN_OUT_NAME = "MNY"
 
 const provider = providers.getDefaultProvider(5)
-const swappyContract = new Contract(verifyingContract, ABI, provider)
+// const provider = new providers.JsonRpcProvider("http://localhost:8599", 5)
+const validatorContract = new Contract(verifyingContractAddress, VALIDATOR_ABI, provider)
+const tokenInContract = new Contract(TOKEN_IN_ADDRESS, ERC20_ABI, provider)
 
 function App() {
   const { status, connect, account, chainId, ethereum } = useMetaMask()
   const [actionStatus, setActionStatus] = useState<string>()
-  const [success, setSuccess] = useState<boolean>()
+  const [validatorTokenInAllowance, setValidatorTokenInAllowance] = useState<BigNumber>()
 
-  const buyDai = (amount: BigNumber) => {
+  useEffect(() => {
+    async function load() {
+      const getValidatorTokenInAllowance = async (): Promise<BigNumber> => {
+        return await tokenInContract.allowance(account, verifyingContractAddress)
+      }
+      const allowance = await getValidatorTokenInAllowance()
+      console.log("allowance", allowance)
+      if ((validatorTokenInAllowance && !allowance.eq(validatorTokenInAllowance)) || !validatorTokenInAllowance) {
+        setValidatorTokenInAllowance(allowance)
+      }
+    }
+    load()
+  }, [validatorTokenInAllowance, account, actionStatus])
+
+  // 0.001 ETH
+  const testAmount = BigNumber.from(1).mul(ETH).div(1000)
+
+  const swapTokens = () => {
     const data = {
       types: {
         EIP712Domain: [
@@ -46,25 +68,26 @@ function App() {
         name: "SonOfASwap",
         version: "1",
         chainId,
-        verifyingContract,
+        verifyingContract: verifyingContractAddress,
       },
       primaryType: "SwapOrder",
       message: {
-        router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
-        amountIn: amount._hex,
+        // router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
+        router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
+        amountIn: testAmount._hex,
         amountOut: "0x42",
         tradeType: "v3_exactInputSingle",
         recipient: account,
-        path: [WETH_ADDRESS, UNI_ADDRESS],
-        deadline: BigNumber.from(Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13)._hex, // 30 min from now
-        sqrtPriceLimitX96: "0x0",
-        fee: "0x0",
+        path: [TOKEN_IN_ADDRESS, TOKEN_OUT_ADDRESS],
+        deadline: Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13, // 30 min from now
+        sqrtPriceLimitX96: "0x00",
+        fee: "3000",
       },
     }
 
     console.log("data", data)
 
-    setActionStatus(`buying ${amount} UNI...`)
+    setActionStatus(`buying ${testAmount} ${TOKEN_OUT_NAME}...`)
     ethereum.sendAsync({
       method: "eth_signTypedData_v4",
       params: [ethereum.selectedAddress, JSON.stringify(data)],
@@ -80,7 +103,7 @@ function App() {
       }
       else if (!err && !res.error) {
         setActionStatus("order signed successfully")
-        console.log("*!*!* res", res);
+        console.log("signature", res.result);
         const payload = {
           signedMessage: res.result,
           data,
@@ -88,11 +111,9 @@ function App() {
         try {
           const postResponse = await axios.post(`${API_URL}/uniswap`, payload)
           if (postResponse.status === 200) {
-            setSuccess(true)
             setActionStatus(JSON.stringify(postResponse.data))
           }
         } catch (e) {
-          setSuccess(false)
           setActionStatus(`Tx failed. ${JSON.stringify(e)}`)
         }
       }
@@ -100,9 +121,31 @@ function App() {
   }
 
   const getContractStatus = async () => {
-    const res = await swappyContract.status()
-    console.log(res)
+    const res = await validatorContract.status()
     alert(res.toString())
+  }
+
+  const approveValidatorContractSpendTokenIn = async () => {
+    if (ethereum && account) {
+      let tx = await tokenInContract.populateTransaction.approve(verifyingContractAddress, testAmount)
+      tx = {
+        from: account,
+        ...tx,
+      }
+      console.log(tx)
+      await ethereum.request({method: 'eth_sendTransaction', params: [tx]})
+        .then(() => {
+          setActionStatus("WETH Spend Approval Sent")
+        })
+        .catch((err: any) => {
+          console.error(err)
+          setActionStatus("WETH Approval Failed")
+        })
+    }
+  }
+
+  const isAllowanceSet = (): boolean => {
+    return !!validatorTokenInAllowance && validatorTokenInAllowance.gte(testAmount)
   }
 
   return (
@@ -114,13 +157,15 @@ function App() {
         <p>{`Wallet ${status}`}</p>
         <p>{`Address: ${account}`}</p>
         <p>{`Chain: ${chainId}`}</p>
-        <p>Verifier: <a href={`https://goerli.etherscan.io/address/${verifyingContract}`}>{verifyingContract}</a></p>
+        <p>Verifier: <a href={`https://goerli.etherscan.io/address/${verifyingContractAddress}`}>{verifyingContractAddress}</a></p>
         <button onClick={getContractStatus}>Get contract status</button>
+        <br />
+        <button onClick={approveValidatorContractSpendTokenIn} disabled={isAllowanceSet()}>Allow SonOfASwap to spend your {TOKEN_IN_NAME}</button>
         <div className='box'>
           <p style={{wordWrap: "break-word"}}><code>{actionStatus}</code></p>
         </div>
       </div>
-      <button disabled={status !== "connected"} onClick={() => buyDai(BigNumber.from(1).mul(ETH).div(10))}>Buy 0.1 ETH worth of UNI</button>
+      <button disabled={status !== "connected" || !isAllowanceSet()} onClick={swapTokens}>Buy 0.001 ETH worth of {TOKEN_OUT_NAME}</button>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import dotenv from "dotenv"
 import { SignedMessageRequest } from "./interfaces";
 import swapAbi from "./abi/sonOfASwap.json"
 import { GWEI } from "./util"
+import { address as validatorContractAddress } from "../../contracts/contract.json"
 
 dotenv.config()
 
@@ -16,9 +17,9 @@ const app = express()
     .use(bodyParser.json())
     .use(cors())
 const provider = new providers.JsonRpcProvider(process.env.RPC_URL, 5)
-// const provider = new providers.JsonRpcProvider("http://localhost:8545", 31337)
+// const provider = new providers.JsonRpcProvider("http://localhost:8599", 5)
 const signer = new Wallet(process.env.SIGNER_KEY || "", provider)
-const swappyContract = new Contract("0x99D72ccAa651EEdf7Ece658c1f8aAa7f3f9778B2", swapAbi, signer)
+const validatorContract = new Contract(validatorContractAddress, swapAbi, signer)
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Hello world!")
@@ -48,10 +49,10 @@ app.post("/uniswap", async (req: Request, res: Response) => {
             console.log("v", v)
             console.log("r", r)
             console.log("s", s)
-            const verifySendRes = await swappyContract.verifyAndSend(
+            const verifySendRes = await validatorContract.verifyAndSend(
                 msgReq.data.message,
                 v, r, s,
-                {gasPrice: GWEI.mul(13), gasLimit: BigNumber.from(169000)}
+                {gasPrice: GWEI.mul(13), gasLimit: BigNumber.from(200000)}
             )
             console.log("verify send response", verifySendRes)
             console.log("verify send result", await verifySendRes.wait())
