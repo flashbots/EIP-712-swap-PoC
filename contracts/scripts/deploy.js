@@ -3,23 +3,21 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const hre = require("hardhat");
+const { ethers } = require("hardhat")
+const hre = require("hardhat")
+require("dotenv").config()
 
 async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
+  console.log("IM DEPLOYIIIIIIIIIING!!!")
+  const deployer = new ethers.Wallet(process.env.SIGNER_KEY).connect(hre.ethers.provider)
+  const SonOfASwap = await ethers.getContractFactory("SonOfASwap", deployer)
+  const sonOfASwap = await SonOfASwap.deploy()
+  await sonOfASwap.deployed()
 
-  // We get the contract to deploy
-  const sonOfASwapRaw = await (await hre.ethers.getContractFactory("SonOfASwap")).getDeployTransaction()
-  const signer = new hre.ethers.Wallet(process.env.SIGNER_KEY).connect(hre.ethers.provider)
-  // const signedTx = await signer.signTransaction(sonOfASwapRaw)
-  const sendResult = await signer.sendTransaction(sonOfASwapRaw)
-
-  console.log("SonOfASwap deployed:", await sendResult.wait());
+  await hre.tenderly.persistArtifacts({
+    name: "SonOfASwap",
+    address: sonOfASwap.address,
+  })
 }
 
 // We recommend this pattern to be able to use async/await everywhere

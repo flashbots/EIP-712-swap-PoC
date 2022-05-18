@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
+require("@tenderly/hardhat-tenderly");
 require("dotenv").config();
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -25,17 +26,19 @@ module.exports = {
         privateKey: process.env.SIGNER_KEY,
         balance: "10000000000000000000000",
       },
+      chainId: parseInt(process.env.CHAIN_ID_OVERRIDE) || 31337,
       forking: {
-        url: process.env.GOERLI_URL,
+        url: process.env.RPC_URL || process.env.GOERLI_URL,
       },
+      loggingEnabled: true,
     },
     "local": {
-      url: "http://localhost:8545",
-      chainId: 31337,
+      chainId: parseInt(process.env.CHAIN_ID_OVERRIDE) || 31337,
+      url: "http://localhost:8599",
     },
     "goerli": {
-      url: process.env.GOERLI_URL,
       chainId: 5,
+      url: process.env.GOERLI_URL,
     },
   }
 };
