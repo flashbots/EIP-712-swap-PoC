@@ -75,13 +75,13 @@ function App() {
         // router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
         router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
         amountIn: testAmount.toString(),
-        amountOut: 42,
+        amountOut: "42",
         tradeType: "v3_exactInputSingle",
         recipient: account,
         path: [TOKEN_IN_ADDRESS, TOKEN_OUT_ADDRESS],
-        deadline: Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13, // 30 min from now
-        sqrtPriceLimitX96: 0,
-        fee: 3000,
+        deadline: (Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13).toString(), // 30 min from now
+        sqrtPriceLimitX96: "0",
+        fee: "3000",
       },
     }
 
