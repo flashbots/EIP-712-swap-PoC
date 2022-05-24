@@ -13,8 +13,8 @@ struct SwapOrder {
     address[] path;
     uint256 deadline;
     // v3
-    uint160 sqrtPriceLimitX96;
-    uint24 fee;
+    uint256 sqrtPriceLimitX96; // uint160 represented as uint256 for golang compatibility // TODO: remove casting (fix golang lib)
+    uint256 fee; // uint24 represented as uint256 for golang compatibility // TODO: remove casting (fix golang lib)
 }
 
 contract SonOfASwap {
@@ -31,7 +31,7 @@ contract SonOfASwap {
     string private constant EIP712_DOMAIN =
         "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)";
     string private constant SWAPORDER =
-        "SwapOrder(address router,uint256 amountIn,uint256 amountOut,string tradeType,address recipient,address[] path,uint deadline,uint160 sqrtPriceLimitX96,uint24 fee)";
+        "SwapOrder(address router,uint256 amountIn,uint256 amountOut,string tradeType,address recipient,address[] path,uint deadline,uint256 sqrtPriceLimitX96,uint256 fee)";
 
     bytes32 private constant EIP712_DOMAIN_TYPEHASH =
         keccak256(abi.encodePacked(EIP712_DOMAIN));
@@ -141,12 +141,12 @@ contract SonOfASwap {
                 .ExactInputSingleParams(
                     order.path[0], // tokenIn
                     order.path[1], // tokenOut
-                    order.fee, // fee
+                    uint24(order.fee), // fee
                     order.recipient, // recipient
                     order.deadline, // deadline
                     order.amountIn, // amountIn
                     order.amountOut, // amountOutMinimum
-                    order.sqrtPriceLimitX96 // sqrtPriceLimitX96
+                    uint160(order.sqrtPriceLimitX96) // sqrtPriceLimitX96
                 );
             emit ExactInputSingleSwap(order.recipient);
 

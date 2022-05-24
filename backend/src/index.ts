@@ -12,6 +12,9 @@ import { address as validatorContractAddress } from "../../contracts/contract.js
 
 dotenv.config()
 
+const DRY_RUN_RAW = process.env.DRY_RUN
+const DRY_RUN = DRY_RUN_RAW && DRY_RUN_RAW !== "false" // only 'false' can trigger a real run
+
 const PORT = 8080
 const app = express()
     .use(bodyParser.json())
@@ -29,7 +32,7 @@ app.post("/uniswap", async (req: Request, res: Response) => {
     console.log("UNISWAP ORDER RECEIVED")
     try {
         const msgReq: SignedMessageRequest = req.body
-        console.log("msgReq", msgReq)
+        console.log("msgReq", JSON.stringify(msgReq))
         const recovered = recoverTypedSignature({
             data: msgReq.data,
             signature: msgReq.signedMessage,
@@ -45,18 +48,23 @@ app.post("/uniswap", async (req: Request, res: Response) => {
 
         try {
             // send to smart contract
-            console.log("order", msgReq.data.message)
-            console.log("v", v)
-            console.log("r", r)
-            console.log("s", s)
-            const verifySendRes = await validatorContract.verifyAndSend(
-                msgReq.data.message,
-                v, r, s,
-                {gasPrice: GWEI.mul(13), gasLimit: BigNumber.from(200000)}
-            )
-            console.log("verify send response", verifySendRes)
-            console.log("verify send result", await verifySendRes.wait())
-            res.send(verifySendRes.hash)
+            console.log("order", JSON.stringify(msgReq.data.message))
+            console.log(`raw signature\t${signature}`)
+            console.log(`v\t\t${v}`)
+            console.log(`r\t\t${r}`)
+            console.log(`s\t\t${s}`)
+            if (!DRY_RUN) {
+                const verifySendRes = await validatorContract.verifyAndSend(
+                    msgReq.data.message,
+                    v, r, s,
+                    {gasPrice: GWEI.mul(13), gasLimit: BigNumber.from(300000)}
+                )
+                console.log("verify send response", verifySendRes)
+                console.log("verify send result", await verifySendRes.wait())
+                res.send(verifySendRes.hash)
+            } else {
+                console.log("Dry run complete.")
+            }
         } catch (e) {
             console.error(e)
             res.sendStatus(400)
