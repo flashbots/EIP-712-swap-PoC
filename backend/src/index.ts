@@ -60,8 +60,9 @@ app.post("/uniswap", async (req: Request, res: Response) => {
                     {gasPrice: GWEI.mul(13), gasLimit: BigNumber.from(300000)}
                 )
                 console.log("verify send response", verifySendRes)
+                // send pending tx hash before waiting for result
+                res.send({pendingTxHash: verifySendRes.hash})
                 console.log("verify send result", await verifySendRes.wait())
-                res.send(verifySendRes.hash)
             } else {
                 console.log("Dry run complete.")
             }
