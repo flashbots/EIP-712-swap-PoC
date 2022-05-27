@@ -12,7 +12,8 @@ const API_URL = "http://localhost:8080"
 
 const verifyingContractAddress = validatorDeployment.address
 const TOKEN_IN_ADDRESS = "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6" //  WETH
-const TOKEN_OUT_ADDRESS = "0x7ebC3778cF08f636805D9382D6c16e79ed9F370E" // test ERC20
+const TOKEN_MIDDLE_ADDRESS = "0x3041EfE098e2cde8420DD16c9fBF5bde630f6168" // test ERC20 (MNY2)
+const TOKEN_OUT_ADDRESS = "0x7ebC3778cF08f636805D9382D6c16e79ed9F370E" // test ERC20 (MNY)
 const TOKEN_IN_NAME = "WETH"
 const TOKEN_OUT_NAME = "MNY"
 
@@ -41,9 +42,62 @@ function App() {
   }, [validatorTokenInAllowance, account, actionStatus])
 
   // 0.001 ETH
-  const testAmount = BigNumber.from(1).mul(ETH).div(1000)
+  const maxUint = BigNumber.from("115792089237316195423570985008687907853269984665640564039457584007913129639935")
+  const testAmount = BigNumber.from(1).mul(ETH).div(1000) // 0.001 (*10^18)
 
-  const swapTokens = () => {
+  const exactInputSingleMessage = {
+    // router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
+    router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
+    amountIn: testAmount.toString(),
+    amountOut: "42", // amountOutMinimum
+    tradeType: "v3_exactInputSingle",
+    recipient: account,
+    path: [TOKEN_IN_ADDRESS, TOKEN_OUT_ADDRESS],
+    deadline: (Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13).toString(), // 30 min from now
+    sqrtPriceLimitX96: "0",
+    fee: "3000",
+  };
+
+  const exactOutputSingleMessage = {
+    // router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
+    router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
+    amountIn: maxUint.toString(), // amountInMaximum
+    amountOut: testAmount.toString(),
+    tradeType: "v3_exactOutputSingle",
+    recipient: account,
+    path: [TOKEN_IN_ADDRESS, TOKEN_OUT_ADDRESS],
+    deadline: (Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13).toString(), // 30 min from now
+    sqrtPriceLimitX96: "0",
+    fee: "3000",
+  }
+
+  const exactInputMessage = {
+    // router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
+    router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
+    amountIn: testAmount.toString(),
+    amountOut: "42", // amountOutMinimum
+    tradeType: "v3_exactInput",
+    recipient: account,
+    path: [TOKEN_IN_ADDRESS, TOKEN_MIDDLE_ADDRESS, TOKEN_OUT_ADDRESS],
+    deadline: (Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13).toString(), // 30 min from now
+    sqrtPriceLimitX96: "0",
+    fee: "3000",
+  }
+
+  const exactOutputMessage = {
+    // router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
+    router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
+    amountIn: maxUint.toString(), // amountInMaximum
+    amountOut: testAmount.toString(),
+    tradeType: "v3_exactOutput",
+    recipient: account,
+    path: [TOKEN_IN_ADDRESS, TOKEN_MIDDLE_ADDRESS, TOKEN_OUT_ADDRESS],
+    deadline: (Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13).toString(), // 30 min from now
+    sqrtPriceLimitX96: "0",
+    fee: "3000",
+  }
+
+  const swapTokens = (message: any) => {
     const data = {
       types: {
         EIP712Domain: [
@@ -71,18 +125,7 @@ function App() {
         verifyingContract: verifyingContractAddress,
       },
       primaryType: "SwapOrder",
-      message: {
-        // router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
-        router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
-        amountIn: testAmount.toString(),
-        amountOut: "42",
-        tradeType: "v3_exactInputSingle",
-        recipient: account,
-        path: [TOKEN_IN_ADDRESS, TOKEN_OUT_ADDRESS],
-        deadline: (Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13).toString(), // 30 min from now
-        sqrtPriceLimitX96: "0",
-        fee: "3000",
-      },
+      message,
     }
 
     console.log("data", data)
@@ -127,7 +170,7 @@ function App() {
 
   const approveValidatorContractSpendTokenIn = async () => {
     if (ethereum && account) {
-      let tx = await tokenInContract.populateTransaction.approve(verifyingContractAddress, testAmount)
+      let tx = await tokenInContract.populateTransaction.approve(verifyingContractAddress, maxUint)
       tx = {
         from: account,
         ...tx,
@@ -160,12 +203,16 @@ function App() {
         <p>Verifier: <a href={`https://goerli.etherscan.io/address/${verifyingContractAddress}`}>{verifyingContractAddress}</a></p>
         <button onClick={getContractStatus}>Get contract status</button>
         <br />
-        <button onClick={approveValidatorContractSpendTokenIn} disabled={isAllowanceSet()}>Allow SonOfASwap to spend your {TOKEN_IN_NAME}</button>
+        <button onClick={approveValidatorContractSpendTokenIn} disabled={isAllowanceSet()}>Allow SonOfASwap to spend ALL of your {TOKEN_IN_NAME}</button>
         <div className='box'>
           <p style={{wordWrap: "break-word"}}><code>{actionStatus}</code></p>
         </div>
       </div>
-      <button disabled={status !== "connected" || !isAllowanceSet()} onClick={swapTokens}>Buy 0.001 ETH worth of {TOKEN_OUT_NAME}</button>
+      <button disabled={status !== "connected" || !isAllowanceSet()} onClick={() => swapTokens(exactInputSingleMessage)}>Buy 0.001 WETH worth of {TOKEN_OUT_NAME}</button>
+      <button disabled={status !== "connected" || !isAllowanceSet()} onClick={() => swapTokens(exactOutputSingleMessage)}>Buy 0.001 {TOKEN_OUT_NAME} with WETH</button>
+      <button disabled={status !== "connected" || !isAllowanceSet()} onClick={() => swapTokens(exactInputMessage)}>Buy 0.001 ETH worth of {TOKEN_OUT_NAME} via MNY2</button>
+      <button disabled={status !== "connected" || !isAllowanceSet()} onClick={() => swapTokens(exactOutputMessage)}>Buy 0.001 {TOKEN_OUT_NAME} with WETH via MNY2</button>
+      {/* TODO: add buttons for the three other v3 functions */}
     </div>
   );
 }

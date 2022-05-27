@@ -2,13 +2,14 @@
 pragma solidity ^0.8;
 
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+// TODO: import uniswap v2 periphery
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 struct SwapOrder {
     address router;
     uint256 amountIn;
     uint256 amountOut;
-    string tradeType; // enum? // "v3_exactInputSingle" | "v3_exactOutputSingle" | "v3_exactInput" | "v3_exactOutput" | "v2_{methodName (there are quite a few)}"
+    string tradeType; // enum? // "v3_exactInputSingle" | "v3_exactOutputSingle" | "v3_exactInput" | "v3_exactOutput" | "v2_swapExactTokensForTokens" | "v2_swapTokensForExactTokens"
     address recipient;
     address[] path;
     uint256 deadline;
@@ -121,8 +122,6 @@ contract SonOfASwap {
             keccak256(abi.encodePacked((b))));
     }
 
-    event ExactInputSingleSwap(address indexed recipient);
-
     function sendOrder(SwapOrder memory order) internal {
         // instantiate router interface
         ISwapRouter router = ISwapRouter(order.router);
@@ -148,22 +147,52 @@ contract SonOfASwap {
                     order.amountOut, // amountOutMinimum
                     uint160(order.sqrtPriceLimitX96) // sqrtPriceLimitX96
                 );
-            emit ExactInputSingleSwap(order.recipient);
 
             // send order to router
-            uint256 amountOutActual = router.exactInputSingle{value: 0x0}(
-                params
-            );
-            status = amountOutActual;
+            router.exactInputSingle{value: 0x0}(params);
         } else if (stringsEqual(order.tradeType, "v3_exactOutputSingle")) {
-            // router.exactOutputSingle(params);
-            revert("unimplemented");
+            ISwapRouter.ExactOutputSingleParams memory params = ISwapRouter
+                .ExactOutputSingleParams(
+                    order.path[0], // tokenIn
+                    order.path[1], // tokenOut
+                    uint24(order.fee), // fee
+                    order.recipient, // recipient
+                    order.deadline, // deadline
+                    order.amountOut, // amountOut
+                    order.amountIn, // amountInMaximum
+                    uint160(order.sqrtPriceLimitX96) // sqrtPriceLimitX96
+                );
+
+            router.exactOutputSingle{value: 0x0}(params);
         } else if (stringsEqual(order.tradeType, "v3_exactInput")) {
-            // router.exactInput(params);
-            revert("unimplemented");
+            ISwapRouter.ExactInputParams memory params = ISwapRouter
+                .ExactInputParams(
+                    abi.encodePacked(order.path), // path
+                    order.recipient, // recipient
+                    order.deadline, // deadline
+                    order.amountIn, // amountIn
+                    order.amountOut // amountOutMinimum
+                );
+            router.exactInput{value: 0x0}(params);
         } else if (stringsEqual(order.tradeType, "v3_exactOutput")) {
-            // router.exactOutput(params);
-            revert("unimplemented");
+            /*
+                struct ExactOutputParams {
+                    bytes path;
+                    address recipient;
+                    uint256 deadline;
+                    uint256 amountOut;
+                    uint256 amountInMaximum;
+                }
+            */
+            ISwapRouter.ExactOutputParams memory params = ISwapRouter
+                .ExactOutputParams(
+                    abi.encodePacked(order.path), // path
+                    order.recipient, // recipient
+                    order.deadline, // deadline
+                    order.amountOut, // amountOut
+                    order.amountIn // amountInMaximum
+                );
+            router.exactOutput{value: 0x0}(params);
         } else {
             // TODO: v2; ignore for now
             revert("unimplemented");
