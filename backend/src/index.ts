@@ -61,7 +61,7 @@ app.post("/uniswap", async (req: Request, res: Response) => {
                 )
                 console.log("verify send response", verifySendRes)
                 // send pending tx hash before waiting for result
-                res.send({pendingTxHash: verifySendRes.hash})
+                res.send({pendingTx: verifySendRes})
                 console.log("verify send result", await verifySendRes.wait())
             } else {
                 console.log("Dry run complete.")
