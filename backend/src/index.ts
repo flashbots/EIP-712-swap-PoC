@@ -67,7 +67,7 @@ app.post("/uniswap", async (req: Request, res: Response) => {
                 console.log("Dry run complete.")
             }
         } catch (e) {
-            console.error(e)
+            console.error("__transaction reverted__", e)
             res.sendStatus(400)
         }
 
