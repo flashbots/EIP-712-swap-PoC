@@ -130,6 +130,8 @@ contract SonOfASwap {
 
         // transfer input token from user to (this)
         tokenIn.transferFrom(order.recipient, address(this), order.amountIn);
+        // TODO: deal with refunds due to slippage (and later, realized MEV)
+
         // approve router to spend (this) tokenIn
         tokenIn.approve(order.router, order.amountIn);
 
@@ -214,5 +216,13 @@ contract SonOfASwap {
     function resetStatus() public {
         require(msg.sender == owner);
         status = 0;
+    }
+
+    // liquidate assets from this contract (for testing purposes only)
+    function liquidate(address tokenAddress) public {
+        require(msg.sender == owner);
+        IERC20 token = IERC20(tokenAddress);
+        uint256 balance = token.balanceOf(address(this));
+        token.transfer(msg.sender, balance);
     }
 }
