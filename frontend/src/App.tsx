@@ -54,10 +54,10 @@ function App() {
   }, [validatorTokenInAllowance, account, actionStatus])
 
   // 0.001 ETH
-  const testAmount = BigNumber.from(1).mul(ETH).div(1000)
   const maxUint = BigNumber.from(
     "115792089237316195423570985008687907853269984665640564039457584007913129639935"
   )
+  const testAmount = BigNumber.from(1).mul(ETH).div(1000) // 0.001 (*10^18)
 
   const exactInputSingleMessage = {
     // router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
@@ -245,7 +245,7 @@ function App() {
           onClick={approveValidatorContractSpendTokenIn}
           disabled={isAllowanceSet()}
         >
-          Allow SonOfASwap to spend your {TOKEN_IN_NAME}
+          Allow SonOfASwap to spend ALL of your {TOKEN_IN_NAME}
         </button>
         <div className="box">
           <p style={{ wordWrap: "break-word" }}>
@@ -255,10 +255,29 @@ function App() {
       </div>
       <button
         disabled={status !== "connected" || !isAllowanceSet()}
-        onClick={swapTokens}
+        onClick={() => swapTokens(exactInputSingleMessage)}
       >
-        Buy 0.001 ETH worth of {TOKEN_OUT_NAME}
+        Buy 0.001 WETH worth of {TOKEN_OUT_NAME}
       </button>
+      <button
+        disabled={status !== "connected" || !isAllowanceSet()}
+        onClick={() => swapTokens(exactOutputSingleMessage)}
+      >
+        Buy 0.001 {TOKEN_OUT_NAME} with WETH
+      </button>
+      <button
+        disabled={status !== "connected" || !isAllowanceSet()}
+        onClick={() => swapTokens(exactInputMessage)}
+      >
+        Buy 0.001 ETH worth of {TOKEN_OUT_NAME} via MNY2
+      </button>
+      <button
+        disabled={status !== "connected" || !isAllowanceSet()}
+        onClick={() => swapTokens(exactOutputMessage)}
+      >
+        Buy 0.001 {TOKEN_OUT_NAME} with WETH via MNY2
+      </button>
+      {/* TODO: add buttons for the three other v3 functions */}
     </div>
   )
 }
