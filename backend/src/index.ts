@@ -35,13 +35,13 @@ app.post("/uniswap", async (req: Request, res: Response) => {
         console.log("msgReq", JSON.stringify(msgReq))
         const recovered = recoverTypedSignature({
             data: msgReq.data,
-            signature: msgReq.signedMessage,
+            signature: msgReq.trade_signature,
             version: SignTypedDataVersion.V4,
         })
         console.log("verified signed message from", recovered)
 
         // parse (r,s,v)
-        const signature = msgReq.signedMessage.substring(2)
+        const signature = msgReq.trade_signature.substring(2)
         const r = "0x" + signature.substring(0, 64)
         const s = "0x" + signature.substring(64, 128)
         const v = parseInt(signature.substring(128, 130), 16)
