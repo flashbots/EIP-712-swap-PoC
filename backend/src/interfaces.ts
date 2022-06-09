@@ -1,6 +1,6 @@
 import { MessageTypes, TypedMessage } from "@metamask/eth-sig-util"
 
 export interface SignedMessageRequest {
-    signedMessage: string,
+    trade_signature: string,
     data: TypedMessage<MessageTypes>, // V<3|4>
 }

@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8;
+pragma solidity =0.7.6;
+pragma abicoder v2;
 
-import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
-// TODO: import uniswap v2 periphery
+// V3 SwapRouter
+// import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+// V2V3 SwapRouter
+import "@uniswap/swap-router-contracts/contracts/interfaces/ISwapRouter02.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 struct SwapOrder {
@@ -16,6 +19,7 @@ struct SwapOrder {
     // v3
     uint256 sqrtPriceLimitX96; // uint160 represented as uint256 for golang compatibility // TODO: remove casting (fix golang lib)
     uint256 fee; // uint24 represented as uint256 for golang compatibility // TODO: remove casting (fix golang lib)
+    // TODO: use fee[] since pools in the path might have different fees
 }
 
 contract SonOfASwap {
@@ -41,7 +45,7 @@ contract SonOfASwap {
 
     bytes32 private DOMAIN_SEPARATOR;
 
-    function getChainID() internal view returns (uint256) {
+    function getChainID() internal pure returns (uint256) {
         uint256 id;
         assembly {
             id := chainid()
@@ -122,9 +126,29 @@ contract SonOfASwap {
             keccak256(abi.encodePacked((b))));
     }
 
+    /**
+    Encodes multihop V3 path.
+    https://docs.uniswap.org/protocol/guides/swaps/multihop-swaps
+    */
+    function encodeMultihopPath(address[] memory path, uint24 fee)
+        internal
+        pure
+        returns (bytes memory)
+    {
+        bytes memory encodedPath;
+        for (uint256 i = 0; i < path.length; i++) {
+            encodedPath = abi.encodePacked(encodedPath, path[i]);
+            if (i < path.length - 1) {
+                // path = abi.encodePacked(path, fees[i]); // TODO <<
+                encodedPath = abi.encodePacked(encodedPath, fee);
+            }
+        }
+        return encodedPath;
+    }
+
     function sendOrder(SwapOrder memory order) internal {
         // instantiate router interface
-        ISwapRouter router = ISwapRouter(order.router);
+        ISwapRouter02 router = ISwapRouter02(order.router);
         // instantiate input token interface
         IERC20 tokenIn = IERC20(order.path[0]);
 
@@ -138,13 +162,13 @@ contract SonOfASwap {
         // choose router method based on order type
         if (stringsEqual(order.tradeType, "v3_exactInputSingle")) {
             // encode function params based on order
-            ISwapRouter.ExactInputSingleParams memory params = ISwapRouter
+            IV3SwapRouter.ExactInputSingleParams memory params = IV3SwapRouter
                 .ExactInputSingleParams(
                     order.path[0], // tokenIn
                     order.path[1], // tokenOut
                     uint24(order.fee), // fee
                     order.recipient, // recipient
-                    order.deadline, // deadline
+                    // order.deadline, // deadline
                     order.amountIn, // amountIn
                     order.amountOut, // amountOutMinimum
                     uint160(order.sqrtPriceLimitX96) // sqrtPriceLimitX96
@@ -153,13 +177,13 @@ contract SonOfASwap {
             // send order to router
             router.exactInputSingle{value: 0x0}(params);
         } else if (stringsEqual(order.tradeType, "v3_exactOutputSingle")) {
-            ISwapRouter.ExactOutputSingleParams memory params = ISwapRouter
+            IV3SwapRouter.ExactOutputSingleParams memory params = IV3SwapRouter
                 .ExactOutputSingleParams(
                     order.path[0], // tokenIn
                     order.path[1], // tokenOut
                     uint24(order.fee), // fee
                     order.recipient, // recipient
-                    order.deadline, // deadline
+                    // order.deadline, // deadline
                     order.amountOut, // amountOut
                     order.amountIn, // amountInMaximum
                     uint160(order.sqrtPriceLimitX96) // sqrtPriceLimitX96
@@ -167,37 +191,45 @@ contract SonOfASwap {
 
             router.exactOutputSingle{value: 0x0}(params);
         } else if (stringsEqual(order.tradeType, "v3_exactInput")) {
-            ISwapRouter.ExactInputParams memory params = ISwapRouter
+            IV3SwapRouter.ExactInputParams memory params = IV3SwapRouter
                 .ExactInputParams(
-                    abi.encodePacked(order.path), // path
+                    encodeMultihopPath(order.path, uint24(order.fee)), // path
                     order.recipient, // recipient
-                    order.deadline, // deadline
+                    // order.deadline, // deadline
                     order.amountIn, // amountIn
                     order.amountOut // amountOutMinimum
                 );
             router.exactInput{value: 0x0}(params);
         } else if (stringsEqual(order.tradeType, "v3_exactOutput")) {
-            /*
-                struct ExactOutputParams {
-                    bytes path;
-                    address recipient;
-                    uint256 deadline;
-                    uint256 amountOut;
-                    uint256 amountInMaximum;
-                }
-            */
-            ISwapRouter.ExactOutputParams memory params = ISwapRouter
+            IV3SwapRouter.ExactOutputParams memory params = IV3SwapRouter
                 .ExactOutputParams(
-                    abi.encodePacked(order.path), // path
+                    encodeMultihopPath(order.path, uint24(order.fee)), // path
                     order.recipient, // recipient
-                    order.deadline, // deadline
+                    // order.deadline, // deadline
                     order.amountOut, // amountOut
                     order.amountIn // amountInMaximum
                 );
             router.exactOutput{value: 0x0}(params);
+        } else if (
+            stringsEqual(order.tradeType, "v2_swapExactTokensForTokens")
+        ) {
+            router.swapExactTokensForTokens{value: 0x0}(
+                order.amountIn, // amountIn
+                order.amountOut, // amountOutMin
+                order.path, // path
+                order.recipient // to
+            );
+        } else if (
+            stringsEqual(order.tradeType, "v2_swapTokensForExactTokens")
+        ) {
+            router.swapTokensForExactTokens{value: 0x0}(
+                order.amountOut, // amountOut
+                order.amountIn, // amountInMax
+                order.path, // path
+                order.recipient // to
+            );
         } else {
-            // TODO: v2; ignore for now
-            revert("unimplemented");
+            revert("METHOD_DNE");
         }
     }
 
