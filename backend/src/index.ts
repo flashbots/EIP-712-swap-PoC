@@ -24,7 +24,20 @@ const provider = new providers.JsonRpcProvider(process.env.RPC_URL, 5)
 const signer = new Wallet(process.env.SIGNER_KEY || "", provider)
 const validatorContract = new Contract(validatorContractAddress, swapAbi, signer)
 
-app.get("/", (req: Request, res: Response) => {
+/**
+ * Extracts {r, s, v} from hex-string signature.
+ * @param rawSignature hex-string signature (0x012301230123012301230123012301230123...)
+ * @returns {r,s,v}
+ */
+const rsvFromRawSignature = (rawSignature: string) => {
+    const signature = rawSignature.substring(2)
+    const r = "0x" + signature.substring(0, 64)
+    const s = "0x" + signature.substring(64, 128)
+    const v = parseInt(signature.substring(128, 130), 16)
+    return { r, s, v }
+}
+
+app.get("/", (_req: Request, res: Response) => {
     res.send("Hello world!")
 })
 
@@ -38,18 +51,13 @@ app.post("/uniswap", async (req: Request, res: Response) => {
             signature: msgReq.trade_signature,
             version: SignTypedDataVersion.V4,
         })
-        console.log("verified signed message from", recovered)
+        console.log("VERIFIED SIGNED MESSAGE from", recovered)
 
-        // parse (r,s,v)
-        const signature = msgReq.trade_signature.substring(2)
-        const r = "0x" + signature.substring(0, 64)
-        const s = "0x" + signature.substring(64, 128)
-        const v = parseInt(signature.substring(128, 130), 16)
+        const { r, s, v } = rsvFromRawSignature(msgReq.trade_signature)
 
         try {
             // send to smart contract
             console.log("order", JSON.stringify(msgReq.data.message))
-            console.log(`raw signature\t${signature}`)
             console.log(`v\t\t${v}`)
             console.log(`r\t\t${r}`)
             console.log(`s\t\t${s}`)
@@ -57,7 +65,7 @@ app.post("/uniswap", async (req: Request, res: Response) => {
                 const verifySendRes = await validatorContract.verifyAndSend(
                     msgReq.data.message,
                     v, r, s,
-                    {gasPrice: GWEI.mul(13), gasLimit: BigNumber.from(300000)}
+                    {gasPrice: GWEI.mul(6), gasLimit: BigNumber.from(500000)}
                 )
                 console.log("verify send response", verifySendRes)
                 // send pending tx hash before waiting for result
@@ -70,8 +78,6 @@ app.post("/uniswap", async (req: Request, res: Response) => {
             console.error(e)
             res.sendStatus(400)
         }
-
-
     } catch (e) {
         console.error("__signature recovery failed__", e)
         res.status(400).send()

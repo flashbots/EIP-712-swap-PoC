@@ -5,6 +5,7 @@
 // Runtime Environment's members available in the global scope.
 const { ethers } = require("hardhat")
 const hre = require("hardhat")
+require("@tenderly/hardhat-tenderly");
 require("dotenv").config()
 
 async function main() {
