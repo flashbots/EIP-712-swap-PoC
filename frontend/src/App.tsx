@@ -31,23 +31,31 @@ function App() {
   const [actionStatus, setActionStatus] = useState<string>()
   const [validatorTokenInAllowance, setValidatorTokenInAllowance] =
     useState<BigNumber>()
+  const [tokenInBalance, setTokenInBalance] = useState<BigNumber>()
 
   useEffect(() => {
     async function load() {
-      const getValidatorTokenInAllowance = async (): Promise<BigNumber> => {
-        return await tokenInContract.allowance(
+      if (account) {
+        const allowance = await tokenInContract.allowance(
           account,
           verifyingContractAddress
         )
-      }
-      const allowance = await getValidatorTokenInAllowance()
-      console.log("allowance", allowance)
-      if (
-        (validatorTokenInAllowance &&
-          !allowance.eq(validatorTokenInAllowance)) ||
-        !validatorTokenInAllowance
-      ) {
-        setValidatorTokenInAllowance(allowance)
+        console.log("allowance", allowance)
+        if (
+          (validatorTokenInAllowance &&
+            !allowance.eq(validatorTokenInAllowance)) ||
+          !validatorTokenInAllowance
+        ) {
+          setValidatorTokenInAllowance(allowance)
+        }
+
+        const tokenInBalanceRes: BigNumber = await tokenInContract.balanceOf(
+          account
+        )
+        console.log("tokenIn balance", tokenInBalanceRes)
+        setTokenInBalance(tokenInBalanceRes)
+      } else {
+        console.warn("account undefined")
       }
     }
     load()
@@ -77,7 +85,7 @@ function App() {
   const exactOutputSingleMessage = {
     // router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
     router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
-    amountIn: maxUint.toString(), // amountInMaximum
+    amountIn: tokenInBalance?.div(1000).toString(), // amountInMaximum (use balance/1000 for demo purposes; uni ui will calculate accurately)
     amountOut: testAmount.toString(),
     tradeType: "v3_exactOutputSingle",
     recipient: account,
@@ -107,7 +115,7 @@ function App() {
   const exactOutputMessage = {
     // router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
     router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
-    amountIn: maxUint.toString(), // amountInMaximum
+    amountIn: tokenInBalance?.div(1000).toString(), // amountInMaximum (use balance/1000 for demo purposes; uni ui will calculate accurately)
     amountOut: testAmount.toString(),
     tradeType: "v3_exactOutput",
     recipient: account,
@@ -220,6 +228,28 @@ function App() {
     )
   }
 
+  const liquidate = async (tokenAddress: string) => {
+    if (ethereum && account) {
+      let tx = await validatorContract.populateTransaction.liquidate(
+        tokenAddress
+      )
+      tx = {
+        from: account,
+        ...tx,
+      }
+      console.log(tx)
+      await ethereum
+        .request({ method: "eth_sendTransaction", params: [tx] })
+        .then(() => {
+          setActionStatus("liquidation success")
+        })
+        .catch((err: any) => {
+          console.error(err)
+          setActionStatus("liquidation failed")
+        })
+    }
+  }
+
   return (
     <div className="App" style={{ backgroundColor: "#bfffd0" }}>
       {status === "notConnected" && (
@@ -246,6 +276,13 @@ function App() {
           disabled={isAllowanceSet()}
         >
           Allow SonOfASwap to spend ALL of your {TOKEN_IN_NAME}
+        </button>
+        <button
+          onClick={() => {
+            liquidate(TOKEN_IN_ADDRESS)
+          }}
+        >
+          Liquidate tokenIn from contract
         </button>
         <div className="box">
           <p style={{ wordWrap: "break-word" }}>

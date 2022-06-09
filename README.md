@@ -27,8 +27,9 @@ graph edges represent existing liquidity pools:
 
 ## TODO
 
-- [x] verify signed message
-- [x] upgrade signed message type to V4
-- [x] write smart contract (validator/executor) to decode tx and verify signature
-- [x] send to uniswap from (validator/executor)
-- [ ] ~~send (validator/executor) tx to flashbots~~ (not important for PoC)
+* [x] verify signed message
+* [x] upgrade signed message type to V4
+* [x] write smart contract (validator/executor) to decode tx and verify signature
+* [x] send to uniswap from (validator/executor)
+  * [x] implement v2 functions, use SwapRouter (v2 + v3) if possible
+* [ ] ~~send (validator/executor) tx to flashbots~~ (not important for PoC)
