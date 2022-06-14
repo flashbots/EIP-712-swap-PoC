@@ -20,11 +20,13 @@ struct SwapOrder {
     uint256 sqrtPriceLimitX96; // uint160 represented as uint256 for golang compatibility // TODO: remove casting (fix golang lib)
     uint256 fee; // uint24 represented as uint256 for golang compatibility // TODO: remove casting (fix golang lib)
     // TODO: use fee[] since pools in the path might have different fees
+    uint256 nonce;
 }
 
 contract SonOfASwap {
     uint256 public status;
     address private owner;
+    mapping(address => uint256) public nonces;
 
     struct EIP712Domain {
         string name;
@@ -36,7 +38,7 @@ contract SonOfASwap {
     string private constant EIP712_DOMAIN =
         "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)";
     string private constant SWAPORDER =
-        "SwapOrder(address router,uint256 amountIn,uint256 amountOut,string tradeType,address recipient,address[] path,uint deadline,uint256 sqrtPriceLimitX96,uint256 fee)";
+        "SwapOrder(address router,uint256 amountIn,uint256 amountOut,string tradeType,address recipient,address[] path,uint deadline,uint256 sqrtPriceLimitX96,uint256 fee,uint256 nonce)";
 
     bytes32 private constant EIP712_DOMAIN_TYPEHASH =
         keccak256(abi.encodePacked(EIP712_DOMAIN));
@@ -98,7 +100,8 @@ contract SonOfASwap {
                     keccak256(abi.encodePacked(order.path)),
                     order.deadline,
                     order.sqrtPriceLimitX96,
-                    order.fee
+                    order.fee,
+                    order.nonce
                 )
             );
     }
@@ -240,14 +243,12 @@ contract SonOfASwap {
         bytes32 s
     ) public {
         require(verify(order, v, r, s), "invalid signature");
-        sendOrder(order);
-        status = status + 1;
-    }
-
-    // status reset for debugging
-    function resetStatus() public {
-        require(msg.sender == owner);
-        status = 0;
+        if (order.nonce == nonces[order.recipient]) {
+            sendOrder(order);
+            nonces[order.recipient] += 1;
+        } else {
+            revert("INVALID_NONCE");
+        }
     }
 
     // liquidate assets from this contract (for testing purposes only)

@@ -54,6 +54,7 @@ app.post("/uniswap", async (req: Request, res: Response) => {
         console.log("VERIFIED SIGNED MESSAGE from", recovered)
 
         const { r, s, v } = rsvFromRawSignature(msgReq.trade_signature)
+        const nonce = await signer.getTransactionCount()
 
         try {
             // send to smart contract
@@ -65,9 +66,16 @@ app.post("/uniswap", async (req: Request, res: Response) => {
                 const verifySendRes = await validatorContract.verifyAndSend(
                     msgReq.data.message,
                     v, r, s,
-                    {gasPrice: GWEI.mul(6), gasLimit: BigNumber.from(500000)}
+                    {gasPrice: GWEI.mul(6), gasLimit: BigNumber.from(500000), nonce}
                 )
                 console.log("verify send response", verifySendRes)
+                const verifySendRes2 = await validatorContract.verifyAndSend(
+                    msgReq.data.message,
+                    v, r, s,
+                    {gasPrice: GWEI.mul(6), gasLimit: BigNumber.from(500000), nonce: nonce + 1}
+                )
+                console.log("verify send response", verifySendRes2)
+
                 // send pending tx hash before waiting for result
                 res.send({pendingTx: verifySendRes})
                 console.log("verify send result", await verifySendRes.wait())
