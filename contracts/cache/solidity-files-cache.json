@@ -1,0 +1,690 @@
+{
+  "_format": "ethers-rs-sol-cache-3",
+  "paths": {
+    "artifacts": "out",
+    "sources": "src",
+    "tests": "test",
+    "libraries": [
+      "lib"
+    ]
+  },
+  "files": {
+    "/home/dev/code/eip-712-poc/contracts/lib/@openzeppelin/contracts/contracts/token/ERC20/IERC20.sol": {
+      "lastModificationDate": 1655256694394,
+      "contentHash": "e0a41531d159d3a32f84b7a3ecf9fabb",
+      "sourceName": "lib/@openzeppelin/contracts/contracts/token/ERC20/IERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.6.0, <0.8.0",
+      "artifacts": {
+        "IERC20": {
+          "0.7.6+commit.7338295f.Linux.gcc": "IERC20.sol/IERC20.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/lib/@uniswap/swap-router-contracts/contracts/interfaces/IApproveAndCall.sol": {
+      "lastModificationDate": 1655256695730,
+      "contentHash": "41454ac7eae2c8b77ce5af1373711483",
+      "sourceName": "lib/@uniswap/swap-router-contracts/contracts/interfaces/IApproveAndCall.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [],
+      "versionRequirement": "=0.7.6",
+      "artifacts": {
+        "IApproveAndCall": {
+          "0.7.6+commit.7338295f.Linux.gcc": "IApproveAndCall.sol/IApproveAndCall.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/lib/@uniswap/swap-router-contracts/contracts/interfaces/IMulticallExtended.sol": {
+      "lastModificationDate": 1655256695730,
+      "contentHash": "e750ab3fbdb2c79308dcb1880a733bc0",
+      "sourceName": "lib/@uniswap/swap-router-contracts/contracts/interfaces/IMulticallExtended.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [
+        "lib/@uniswap/v3-periphery/contracts/interfaces/IMulticall.sol"
+      ],
+      "versionRequirement": ">=0.7.5",
+      "artifacts": {
+        "IMulticallExtended": {
+          "0.7.6+commit.7338295f.Linux.gcc": "IMulticallExtended.sol/IMulticallExtended.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/lib/@uniswap/swap-router-contracts/contracts/interfaces/ISwapRouter02.sol": {
+      "lastModificationDate": 1655256695730,
+      "contentHash": "dc86e28f0c55e045d60e2378d3357772",
+      "sourceName": "lib/@uniswap/swap-router-contracts/contracts/interfaces/ISwapRouter02.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [
+        "lib/@uniswap/swap-router-contracts/contracts/interfaces/IApproveAndCall.sol",
+        "lib/@uniswap/swap-router-contracts/contracts/interfaces/IMulticallExtended.sol",
+        "lib/@uniswap/swap-router-contracts/contracts/interfaces/IV2SwapRouter.sol",
+        "lib/@uniswap/swap-router-contracts/contracts/interfaces/IV3SwapRouter.sol",
+        "lib/@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol",
+        "lib/@uniswap/v3-periphery/contracts/interfaces/IMulticall.sol",
+        "lib/@uniswap/v3-periphery/contracts/interfaces/ISelfPermit.sol"
+      ],
+      "versionRequirement": ">=0.7.5",
+      "artifacts": {
+        "ISwapRouter02": {
+          "0.7.6+commit.7338295f.Linux.gcc": "ISwapRouter02.sol/ISwapRouter02.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/lib/@uniswap/swap-router-contracts/contracts/interfaces/IV2SwapRouter.sol": {
+      "lastModificationDate": 1655256695734,
+      "contentHash": "31b850b8f63e5aaa8922df7b716dcba8",
+      "sourceName": "lib/@uniswap/swap-router-contracts/contracts/interfaces/IV2SwapRouter.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.7.5",
+      "artifacts": {
+        "IV2SwapRouter": {
+          "0.7.6+commit.7338295f.Linux.gcc": "IV2SwapRouter.sol/IV2SwapRouter.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/lib/@uniswap/swap-router-contracts/contracts/interfaces/IV3SwapRouter.sol": {
+      "lastModificationDate": 1655256695734,
+      "contentHash": "8c659c3230e55ac2bd89cc6d98f4bd43",
+      "sourceName": "lib/@uniswap/swap-router-contracts/contracts/interfaces/IV3SwapRouter.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [
+        "lib/@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol"
+      ],
+      "versionRequirement": ">=0.7.5",
+      "artifacts": {
+        "IV3SwapRouter": {
+          "0.7.6+commit.7338295f.Linux.gcc": "IV3SwapRouter.sol/IV3SwapRouter.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/lib/@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol": {
+      "lastModificationDate": 1655263464962,
+      "contentHash": "a8ba2d37b0107911ae0e3b0e123cbd83",
+      "sourceName": "lib/@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.5.0",
+      "artifacts": {
+        "IUniswapV3SwapCallback": {
+          "0.7.6+commit.7338295f.Linux.gcc": "IUniswapV3SwapCallback.sol/IUniswapV3SwapCallback.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/lib/@uniswap/v3-periphery/contracts/interfaces/IMulticall.sol": {
+      "lastModificationDate": 1655256697118,
+      "contentHash": "a2e56a9714654fdbdf3a7bd35ad4ebd1",
+      "sourceName": "lib/@uniswap/v3-periphery/contracts/interfaces/IMulticall.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.7.5",
+      "artifacts": {
+        "IMulticall": {
+          "0.7.6+commit.7338295f.Linux.gcc": "IMulticall.sol/IMulticall.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/lib/@uniswap/v3-periphery/contracts/interfaces/ISelfPermit.sol": {
+      "lastModificationDate": 1655256697118,
+      "contentHash": "bb6ee7140c27d283bf7c5f5780c8fcd9",
+      "sourceName": "lib/@uniswap/v3-periphery/contracts/interfaces/ISelfPermit.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.7.5",
+      "artifacts": {
+        "ISelfPermit": {
+          "0.7.6+commit.7338295f.Linux.gcc": "ISelfPermit.sol/ISelfPermit.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/lib/forge-std/lib/ds-test/src/test.sol": {
+      "lastModificationDate": 1655255111218,
+      "contentHash": "962996f0e05d5218857a538a62d7c47e",
+      "sourceName": "lib/forge-std/lib/ds-test/src/test.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.5.0",
+      "artifacts": {
+        "DSTest": {
+          "0.8.13+commit.abaa5c0e.Linux.gcc": "test.sol/DSTest.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/lib/forge-std/src/Script.sol": {
+      "lastModificationDate": 1655255110750,
+      "contentHash": "a24c6682dfdd459618422202d7b97fec",
+      "sourceName": "lib/forge-std/src/Script.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol"
+      ],
+      "versionRequirement": ">=0.6.0, <0.9.0",
+      "artifacts": {
+        "Script": {
+          "0.8.13+commit.abaa5c0e.Linux.gcc": "Script.sol/Script.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/lib/forge-std/src/Test.sol": {
+      "lastModificationDate": 1655255110750,
+      "contentHash": "4d6050a67786485eb8ae69d91756f1c8",
+      "sourceName": "lib/forge-std/src/Test.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Script.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol"
+      ],
+      "versionRequirement": ">=0.6.0, <0.9.0",
+      "artifacts": {
+        "Test": {
+          "0.8.13+commit.abaa5c0e.Linux.gcc": "Test.sol/Test.json"
+        },
+        "stdError": {
+          "0.8.13+commit.abaa5c0e.Linux.gcc": "Test.sol/stdError.json"
+        },
+        "stdMath": {
+          "0.8.13+commit.abaa5c0e.Linux.gcc": "Test.sol/stdMath.json"
+        },
+        "stdStorage": {
+          "0.8.13+commit.abaa5c0e.Linux.gcc": "Test.sol/stdStorage.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/lib/forge-std/src/Vm.sol": {
+      "lastModificationDate": 1655255110750,
+      "contentHash": "93730815cc457c9e650190f81a85f3ec",
+      "sourceName": "lib/forge-std/src/Vm.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.6.0",
+      "artifacts": {
+        "Vm": {
+          "0.8.13+commit.abaa5c0e.Linux.gcc": "Vm.sol/Vm.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/lib/forge-std/src/console.sol": {
+      "lastModificationDate": 1655255110750,
+      "contentHash": "100b8a33b917da1147740d7ab8b0ded3",
+      "sourceName": "lib/forge-std/src/console.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.4.22, <0.9.0",
+      "artifacts": {
+        "console": {
+          "0.8.13+commit.abaa5c0e.Linux.gcc": "console.sol/console.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/lib/forge-std/src/console2.sol": {
+      "lastModificationDate": 1655255110754,
+      "contentHash": "5df91f8e93efbfcccf68973dc1b74a70",
+      "sourceName": "lib/forge-std/src/console2.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.4.22, <0.9.0",
+      "artifacts": {
+        "console2": {
+          "0.8.13+commit.abaa5c0e.Linux.gcc": "console2.sol/console2.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/src/SonOfASwap.sol": {
+      "lastModificationDate": 1655263415710,
+      "contentHash": "056ab5a1fdab1ae7ac1b80ee7aecef37",
+      "sourceName": "src/SonOfASwap.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [
+        "lib/@openzeppelin/contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/@uniswap/swap-router-contracts/contracts/interfaces/IApproveAndCall.sol",
+        "lib/@uniswap/swap-router-contracts/contracts/interfaces/IMulticallExtended.sol",
+        "lib/@uniswap/swap-router-contracts/contracts/interfaces/ISwapRouter02.sol",
+        "lib/@uniswap/swap-router-contracts/contracts/interfaces/IV2SwapRouter.sol",
+        "lib/@uniswap/swap-router-contracts/contracts/interfaces/IV3SwapRouter.sol",
+        "lib/@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol",
+        "lib/@uniswap/v3-periphery/contracts/interfaces/IMulticall.sol",
+        "lib/@uniswap/v3-periphery/contracts/interfaces/ISelfPermit.sol"
+      ],
+      "versionRequirement": "=0.7.6",
+      "artifacts": {
+        "SonOfASwap": {
+          "0.7.6+commit.7338295f.Linux.gcc": "SonOfASwap.sol/SonOfASwap.json"
+        }
+      }
+    },
+    "/home/dev/code/eip-712-poc/contracts/test/Contract.t.sol": {
+      "lastModificationDate": 1655255110194,
+      "contentHash": "848ba83feec29a2e4d286c118102ae20",
+      "sourceName": "test/Contract.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ]
+            }
+          },
+          "evmVersion": "london"
+        }
+      },
+      "imports": [
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Script.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol"
+      ],
+      "versionRequirement": "^0.8.13",
+      "artifacts": {
+        "ContractTest": {
+          "0.8.13+commit.abaa5c0e.Linux.gcc": "Contract.t.sol/ContractTest.json"
+        }
+      }
+    }
+  }
+}

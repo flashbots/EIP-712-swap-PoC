@@ -6,7 +6,7 @@ import { BigNumber, Contract, providers, Wallet } from "ethers"
 import dotenv from "dotenv"
 
 import { SignedMessageRequest } from "./interfaces";
-import swapAbi from "./abi/sonOfASwap.json"
+import swapAbi from "./abi/SonOfASwap.json"
 import { GWEI } from "./util"
 import { address as validatorContractAddress } from "../../contracts/contract.json"
 
