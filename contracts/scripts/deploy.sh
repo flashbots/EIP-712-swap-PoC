@@ -16,7 +16,7 @@ printEnv() {
 }
 
 writeAddress() {
-    # echo $OUTPUT
+    echo $OUTPUT
     ADDRESS=$(echo $OUTPUT | jq .deployedTo)
     echo "{\"address\": $ADDRESS}" > contract.json
 }
@@ -52,3 +52,5 @@ else
         writeAddress
     fi
 fi
+
+cp contract.json ../frontend/src/

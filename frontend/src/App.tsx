@@ -4,7 +4,7 @@ import { BigNumber, Contract, providers } from "ethers"
 import { useMetaMask } from "metamask-react"
 import axios from "axios"
 import ERC20_ABI from "./abi/erc20.json"
-import VALIDATOR_ABI from "./abi/sonOfASwap.json"
+import VALIDATOR_ABI from "./abi/SonOfASwap.json"
 import validatorDeployment from "./contract.json"
 
 const ETH = BigNumber.from(1e9).mul(1e9)
