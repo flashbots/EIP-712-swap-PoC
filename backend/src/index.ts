@@ -62,11 +62,12 @@ app.post("/uniswap", async (req: Request, res: Response) => {
             console.log(`v\t\t${v}`)
             console.log(`r\t\t${r}`)
             console.log(`s\t\t${s}`)
+            console.log("message", msgReq.data.message)
             if (!DRY_RUN) {
                 const verifySendRes = await validatorContract.verifyAndSend(
                     msgReq.data.message,
                     v, r, s,
-                    {gasPrice: GWEI.mul(6), gasLimit: BigNumber.from(500000), nonce}
+                    {gasPrice: GWEI.mul(6), gasLimit: BigNumber.from(500000), nonce, value: 0}
                 )
                 console.log("verify send response", verifySendRes)
 

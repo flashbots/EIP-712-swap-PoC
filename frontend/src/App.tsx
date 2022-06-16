@@ -26,16 +26,32 @@ const validatorContract = new Contract(
 )
 const tokenInContract = new Contract(TOKEN_IN_ADDRESS, ERC20_ABI, provider)
 
+interface SwapOrderMessage {
+  router: string;
+  amountIn: string;
+  amountOut: string;
+  tradeType: string;
+  recipient: string;
+  path: string[];
+  deadline: string;
+  sqrtPriceLimitX96: string;
+  fee: string;
+  nonce: string;
+}
+
 function App() {
   const { status, connect, account, chainId, ethereum } = useMetaMask()
   const [actionStatus, setActionStatus] = useState<string>()
   const [validatorTokenInAllowance, setValidatorTokenInAllowance] =
     useState<BigNumber>()
   const [tokenInBalance, setTokenInBalance] = useState<BigNumber>()
+  const [swapNonce, setSwapNonce] = useState<BigNumber>()
 
   useEffect(() => {
     async function load() {
+      console.log("load")
       if (account) {
+        // get contract tokenIn allowance for user
         const allowance = await tokenInContract.allowance(
           account,
           verifyingContractAddress
@@ -49,11 +65,18 @@ function App() {
           setValidatorTokenInAllowance(allowance)
         }
 
+        // get user tokenIn balance
         const tokenInBalanceRes: BigNumber = await tokenInContract.balanceOf(
           account
         )
         console.log("tokenIn balance", tokenInBalanceRes)
         setTokenInBalance(tokenInBalanceRes)
+
+        // get user swap nonce
+        const swapNonce: BigNumber = await validatorContract.nonces(account)
+        setSwapNonce(swapNonce)
+        console.log("swapNonce", swapNonce)
+
       } else {
         console.warn("account undefined")
       }
@@ -67,64 +90,77 @@ function App() {
   )
   const testAmount = BigNumber.from(1).mul(ETH).div(1000) // 0.001 (*10^18)
 
-  const exactInputSingleMessage = {
-    // router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
-    router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
-    amountIn: testAmount.toString(),
-    amountOut: "42", // amountOutMinimum
-    tradeType: "v3_exactInputSingle",
-    recipient: account,
-    path: [TOKEN_IN_ADDRESS, TOKEN_OUT_ADDRESS],
-    deadline: (
-      Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13
-    ).toString(), // 30 min from now
-    sqrtPriceLimitX96: "0",
-    fee: "3000",
+  const exactInputSingleMessage = (): SwapOrderMessage => {
+    console.log("swapNonce", swapNonce)
+    return {
+      router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
+      // router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
+      amountIn: testAmount.toString(),
+      amountOut: "42", // amountOutMinimum
+      tradeType: "v3_exactInputSingle",
+      recipient: account || "0x0",
+      path: [TOKEN_IN_ADDRESS, TOKEN_OUT_ADDRESS],
+      deadline: (
+        Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13
+      ).toString(), // 30 min from now
+      sqrtPriceLimitX96: "0",
+      fee: "3000",
+      nonce: swapNonce?.toString() || "0",
+    }
   }
 
-  const exactOutputSingleMessage = {
-    // router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
-    router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
-    amountIn: tokenInBalance?.div(1000).toString(), // amountInMaximum (use balance/1000 for demo purposes; uni ui will calculate accurately)
+  const exactOutputSingleMessage = (): SwapOrderMessage => {
+    return {
+    router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
+    // router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
+    amountIn: tokenInBalance?.div(1000).toString() || "0", // amountInMaximum (use balance/1000 for demo purposes; uni ui will calculate accurately)
     amountOut: testAmount.toString(),
     tradeType: "v3_exactOutputSingle",
-    recipient: account,
+    recipient: account || "0x0",
     path: [TOKEN_IN_ADDRESS, TOKEN_OUT_ADDRESS],
     deadline: (
       Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13
     ).toString(), // 30 min from now
     sqrtPriceLimitX96: "0",
     fee: "3000",
+    nonce: swapNonce?.toString() || "0",
+    }
   }
 
-  const exactInputMessage = {
-    // router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
-    router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
-    amountIn: testAmount.toString(),
-    amountOut: "42", // amountOutMinimum
-    tradeType: "v3_exactInput",
-    recipient: account,
-    path: [TOKEN_IN_ADDRESS, TOKEN_MIDDLE_ADDRESS, TOKEN_OUT_ADDRESS],
-    deadline: (
-      Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13
-    ).toString(), // 30 min from now
-    sqrtPriceLimitX96: "0",
-    fee: "3000",
+  const exactInputMessage = (): SwapOrderMessage => {
+    return {
+      router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
+      // router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
+      amountIn: testAmount.toString(),
+      amountOut: "42", // amountOutMinimum
+      tradeType: "v3_exactInput",
+      recipient: account || "0x0",
+      path: [TOKEN_IN_ADDRESS, TOKEN_MIDDLE_ADDRESS, TOKEN_OUT_ADDRESS],
+      deadline: (
+        Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13
+      ).toString(), // 30 min from now
+      sqrtPriceLimitX96: "0",
+      fee: "3000",
+      nonce: swapNonce?.toString() || "0",
+    }
   }
 
-  const exactOutputMessage = {
-    // router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
-    router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
-    amountIn: tokenInBalance?.div(1000).toString(), // amountInMaximum (use balance/1000 for demo purposes; uni ui will calculate accurately)
-    amountOut: testAmount.toString(),
-    tradeType: "v3_exactOutput",
-    recipient: account,
-    path: [TOKEN_IN_ADDRESS, TOKEN_MIDDLE_ADDRESS, TOKEN_OUT_ADDRESS],
-    deadline: (
-      Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13
-    ).toString(), // 30 min from now
-    sqrtPriceLimitX96: "0",
-    fee: "3000",
+  const exactOutputMessage = (): SwapOrderMessage => {
+    return {
+      router: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45", // proxy
+      // router: "0xE592427A0AEce92De3Edee1F18E0157C05861564", // direct
+      amountIn: tokenInBalance?.div(1000).toString() || "0", // amountInMaximum (use balance/1000 for demo purposes; uni ui will calculate accurately)
+      amountOut: testAmount.toString(),
+      tradeType: "v3_exactOutput",
+      recipient: account || "0x0",
+      path: [TOKEN_IN_ADDRESS, TOKEN_MIDDLE_ADDRESS, TOKEN_OUT_ADDRESS],
+      deadline: (
+        Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13
+      ).toString(), // 30 min from now
+      sqrtPriceLimitX96: "0",
+      fee: "3000",
+      nonce: swapNonce?.toString() || "0",
+    }
   }
 
   const swapTokens = (message: any) => {
@@ -146,6 +182,7 @@ function App() {
           { name: "deadline", type: "uint" },
           { name: "sqrtPriceLimitX96", type: "uint256" },
           { name: "fee", type: "uint256" },
+          { name: "nonce", type: "uint256" },
         ],
       },
       domain: {
@@ -178,7 +215,7 @@ function App() {
           setActionStatus("order signed successfully")
           console.log("signature", res.result)
           const payload = {
-            signedMessage: res.result,
+            trade_signature: res.result,
             data,
           }
           try {
@@ -259,6 +296,7 @@ function App() {
       )}
       <div>
         <p>{`Wallet ${status}`}</p>
+        <p>{`SwapNonce: ${swapNonce}`}</p>
         <p>{`Address: ${account}`}</p>
         <p>{`Chain: ${chainId}`}</p>
         <p>
@@ -292,25 +330,25 @@ function App() {
       </div>
       <button
         disabled={status !== "connected" || !isAllowanceSet()}
-        onClick={() => swapTokens(exactInputSingleMessage)}
+        onClick={() => swapTokens(exactInputSingleMessage())}
       >
         Buy 0.001 WETH worth of {TOKEN_OUT_NAME}
       </button>
       <button
         disabled={status !== "connected" || !isAllowanceSet()}
-        onClick={() => swapTokens(exactOutputSingleMessage)}
+        onClick={() => swapTokens(exactOutputSingleMessage())}
       >
         Buy 0.001 {TOKEN_OUT_NAME} with WETH
       </button>
       <button
         disabled={status !== "connected" || !isAllowanceSet()}
-        onClick={() => swapTokens(exactInputMessage)}
+        onClick={() => swapTokens(exactInputMessage())}
       >
         Buy 0.001 ETH worth of {TOKEN_OUT_NAME} via MNY2
       </button>
       <button
         disabled={status !== "connected" || !isAllowanceSet()}
-        onClick={() => swapTokens(exactOutputMessage)}
+        onClick={() => swapTokens(exactOutputMessage())}
       >
         Buy 0.001 {TOKEN_OUT_NAME} with WETH via MNY2
       </button>

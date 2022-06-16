@@ -2,9 +2,6 @@
 pragma solidity =0.7.6;
 pragma abicoder v2;
 
-// V3 SwapRouter
-// import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
-// V2V3 SwapRouter
 import "@uniswap/swap-router-contracts/contracts/interfaces/ISwapRouter02.sol";
 import "@openzeppelin/contracts/contracts/token/ERC20/IERC20.sol";
 

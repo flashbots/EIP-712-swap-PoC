@@ -355,7 +355,7 @@
       }
     },
     "/home/dev/code/eip-712-poc/contracts/lib/forge-std/lib/ds-test/src/test.sol": {
-      "lastModificationDate": 1655255111218,
+      "lastModificationDate": 1655338606109,
       "contentHash": "962996f0e05d5218857a538a62d7c47e",
       "sourceName": "lib/forge-std/lib/ds-test/src/test.sol",
       "solcConfig": {
@@ -387,12 +387,12 @@
       "versionRequirement": ">=0.5.0",
       "artifacts": {
         "DSTest": {
-          "0.8.13+commit.abaa5c0e.Linux.gcc": "test.sol/DSTest.json"
+          "0.7.6+commit.7338295f.Linux.gcc": "test.sol/DSTest.json"
         }
       }
     },
     "/home/dev/code/eip-712-poc/contracts/lib/forge-std/src/Script.sol": {
-      "lastModificationDate": 1655255110750,
+      "lastModificationDate": 1655338606109,
       "contentHash": "a24c6682dfdd459618422202d7b97fec",
       "sourceName": "lib/forge-std/src/Script.sol",
       "solcConfig": {
@@ -428,12 +428,12 @@
       "versionRequirement": ">=0.6.0, <0.9.0",
       "artifacts": {
         "Script": {
-          "0.8.13+commit.abaa5c0e.Linux.gcc": "Script.sol/Script.json"
+          "0.7.6+commit.7338295f.Linux.gcc": "Script.sol/Script.json"
         }
       }
     },
     "/home/dev/code/eip-712-poc/contracts/lib/forge-std/src/Test.sol": {
-      "lastModificationDate": 1655255110750,
+      "lastModificationDate": 1655338606109,
       "contentHash": "4d6050a67786485eb8ae69d91756f1c8",
       "sourceName": "lib/forge-std/src/Test.sol",
       "solcConfig": {
@@ -471,21 +471,21 @@
       "versionRequirement": ">=0.6.0, <0.9.0",
       "artifacts": {
         "Test": {
-          "0.8.13+commit.abaa5c0e.Linux.gcc": "Test.sol/Test.json"
+          "0.7.6+commit.7338295f.Linux.gcc": "Test.sol/Test.json"
         },
         "stdError": {
-          "0.8.13+commit.abaa5c0e.Linux.gcc": "Test.sol/stdError.json"
+          "0.7.6+commit.7338295f.Linux.gcc": "Test.sol/stdError.json"
         },
         "stdMath": {
-          "0.8.13+commit.abaa5c0e.Linux.gcc": "Test.sol/stdMath.json"
+          "0.7.6+commit.7338295f.Linux.gcc": "Test.sol/stdMath.json"
         },
         "stdStorage": {
-          "0.8.13+commit.abaa5c0e.Linux.gcc": "Test.sol/stdStorage.json"
+          "0.7.6+commit.7338295f.Linux.gcc": "Test.sol/stdStorage.json"
         }
       }
     },
     "/home/dev/code/eip-712-poc/contracts/lib/forge-std/src/Vm.sol": {
-      "lastModificationDate": 1655255110750,
+      "lastModificationDate": 1655338606109,
       "contentHash": "93730815cc457c9e650190f81a85f3ec",
       "sourceName": "lib/forge-std/src/Vm.sol",
       "solcConfig": {
@@ -517,12 +517,12 @@
       "versionRequirement": ">=0.6.0",
       "artifacts": {
         "Vm": {
-          "0.8.13+commit.abaa5c0e.Linux.gcc": "Vm.sol/Vm.json"
+          "0.7.6+commit.7338295f.Linux.gcc": "Vm.sol/Vm.json"
         }
       }
     },
     "/home/dev/code/eip-712-poc/contracts/lib/forge-std/src/console.sol": {
-      "lastModificationDate": 1655255110750,
+      "lastModificationDate": 1655338606109,
       "contentHash": "100b8a33b917da1147740d7ab8b0ded3",
       "sourceName": "lib/forge-std/src/console.sol",
       "solcConfig": {
@@ -554,12 +554,12 @@
       "versionRequirement": ">=0.4.22, <0.9.0",
       "artifacts": {
         "console": {
-          "0.8.13+commit.abaa5c0e.Linux.gcc": "console.sol/console.json"
+          "0.7.6+commit.7338295f.Linux.gcc": "console.sol/console.json"
         }
       }
     },
     "/home/dev/code/eip-712-poc/contracts/lib/forge-std/src/console2.sol": {
-      "lastModificationDate": 1655255110754,
+      "lastModificationDate": 1655338606109,
       "contentHash": "5df91f8e93efbfcccf68973dc1b74a70",
       "sourceName": "lib/forge-std/src/console2.sol",
       "solcConfig": {
@@ -591,13 +591,13 @@
       "versionRequirement": ">=0.4.22, <0.9.0",
       "artifacts": {
         "console2": {
-          "0.8.13+commit.abaa5c0e.Linux.gcc": "console2.sol/console2.json"
+          "0.7.6+commit.7338295f.Linux.gcc": "console2.sol/console2.json"
         }
       }
     },
     "/home/dev/code/eip-712-poc/contracts/src/SonOfASwap.sol": {
-      "lastModificationDate": 1655263415710,
-      "contentHash": "056ab5a1fdab1ae7ac1b80ee7aecef37",
+      "lastModificationDate": 1655339091216,
+      "contentHash": "aa221384b51c34e58deb48e2897ab549",
       "sourceName": "src/SonOfASwap.sol",
       "solcConfig": {
         "settings": {
@@ -643,8 +643,8 @@
       }
     },
     "/home/dev/code/eip-712-poc/contracts/test/Contract.t.sol": {
-      "lastModificationDate": 1655255110194,
-      "contentHash": "848ba83feec29a2e4d286c118102ae20",
+      "lastModificationDate": 1655339658945,
+      "contentHash": "101fa8646989fa37cee7d065147f11be",
       "sourceName": "test/Contract.t.sol",
       "solcConfig": {
         "settings": {
@@ -672,17 +672,27 @@
         }
       },
       "imports": [
+        "lib/@openzeppelin/contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/@uniswap/swap-router-contracts/contracts/interfaces/IApproveAndCall.sol",
+        "lib/@uniswap/swap-router-contracts/contracts/interfaces/IMulticallExtended.sol",
+        "lib/@uniswap/swap-router-contracts/contracts/interfaces/ISwapRouter02.sol",
+        "lib/@uniswap/swap-router-contracts/contracts/interfaces/IV2SwapRouter.sol",
+        "lib/@uniswap/swap-router-contracts/contracts/interfaces/IV3SwapRouter.sol",
+        "lib/@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol",
+        "lib/@uniswap/v3-periphery/contracts/interfaces/IMulticall.sol",
+        "lib/@uniswap/v3-periphery/contracts/interfaces/ISelfPermit.sol",
         "lib/forge-std/lib/ds-test/src/test.sol",
         "lib/forge-std/src/Script.sol",
         "lib/forge-std/src/Test.sol",
         "lib/forge-std/src/Vm.sol",
         "lib/forge-std/src/console.sol",
-        "lib/forge-std/src/console2.sol"
+        "lib/forge-std/src/console2.sol",
+        "src/SonOfASwap.sol"
       ],
-      "versionRequirement": "^0.8.13",
+      "versionRequirement": "^0.7",
       "artifacts": {
         "ContractTest": {
-          "0.8.13+commit.abaa5c0e.Linux.gcc": "Contract.t.sol/ContractTest.json"
+          "0.7.6+commit.7338295f.Linux.gcc": "Contract.t.sol/ContractTest.json"
         }
       }
     }
