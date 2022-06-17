@@ -21,3 +21,9 @@ Built with [Forge](https://github.com/foundry-rs/foundry/tree/master/forge).
 ```sh
 ./scripts/deploy.sh
 ```
+
+## run tests
+
+```sh
+forge test --chain-id 9001 --revert-strings debug -vvv
+```
