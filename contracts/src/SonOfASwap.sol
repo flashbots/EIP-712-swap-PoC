@@ -239,7 +239,7 @@ contract SonOfASwap {
         bytes32 r,
         bytes32 s
     ) public {
-        require(verify(order, v, r, s), "invalid signature");
+        require(verify(order, v, r, s), "INVALID_SIGNATURE");
         if (order.nonce == nonces[order.recipient]) {
             sendOrder(order);
             nonces[order.recipient] += 1;

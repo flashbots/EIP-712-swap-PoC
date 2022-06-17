@@ -1,0 +1,11 @@
+{
+  "name": "node-scripts",
+  "version": "1.0.0",
+  "description": "scripts to replicate what metamask does",
+  "main": "index.js",
+  "author": "zeroXbrock",
+  "license": "MIT",
+  "dependencies": {
+    "ethers": "^5.6.8"
+  }
+}

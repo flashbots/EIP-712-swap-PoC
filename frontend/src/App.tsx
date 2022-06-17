@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import "./App.css"
-import { BigNumber, Contract, providers } from "ethers"
+import { BigNumber, Contract, providers, utils } from "ethers"
 import { useMetaMask } from "metamask-react"
 import axios from "axios"
 import ERC20_ABI from "./abi/erc20.json"
@@ -98,7 +98,7 @@ function App() {
       amountIn: testAmount.toString(),
       amountOut: "42", // amountOutMinimum
       tradeType: "v3_exactInputSingle",
-      recipient: account || "0x0",
+      recipient: utils.getAddress(account || "0x0"),
       path: [TOKEN_IN_ADDRESS, TOKEN_OUT_ADDRESS],
       deadline: (
         Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13
@@ -116,7 +116,7 @@ function App() {
     amountIn: tokenInBalance?.div(1000).toString() || "0", // amountInMaximum (use balance/1000 for demo purposes; uni ui will calculate accurately)
     amountOut: testAmount.toString(),
     tradeType: "v3_exactOutputSingle",
-    recipient: account || "0x0",
+    recipient: utils.getAddress(account || "0x0"),
     path: [TOKEN_IN_ADDRESS, TOKEN_OUT_ADDRESS],
     deadline: (
       Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13
@@ -134,7 +134,7 @@ function App() {
       amountIn: testAmount.toString(),
       amountOut: "42", // amountOutMinimum
       tradeType: "v3_exactInput",
-      recipient: account || "0x0",
+      recipient: utils.getAddress(account || "0x0"),
       path: [TOKEN_IN_ADDRESS, TOKEN_MIDDLE_ADDRESS, TOKEN_OUT_ADDRESS],
       deadline: (
         Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13
@@ -152,7 +152,7 @@ function App() {
       amountIn: tokenInBalance?.div(1000).toString() || "0", // amountInMaximum (use balance/1000 for demo purposes; uni ui will calculate accurately)
       amountOut: testAmount.toString(),
       tradeType: "v3_exactOutput",
-      recipient: account || "0x0",
+      recipient: utils.getAddress(account || "0x0"),
       path: [TOKEN_IN_ADDRESS, TOKEN_MIDDLE_ADDRESS, TOKEN_OUT_ADDRESS],
       deadline: (
         Math.floor((Date.now() + 30 * 60 * 1000) / 1000) - 13
@@ -297,14 +297,14 @@ function App() {
       <div>
         <p>{`Wallet ${status}`}</p>
         <p>{`SwapNonce: ${swapNonce}`}</p>
-        <p>{`Address: ${account}`}</p>
+        <p>{`Address: ${account && utils.getAddress(account)}`}</p>
         <p>{`Chain: ${chainId}`}</p>
         <p>
           Verifier:{" "}
           <a
             href={`https://goerli.etherscan.io/address/${verifyingContractAddress}`}
           >
-            {verifyingContractAddress}
+            {utils.getAddress(verifyingContractAddress)}
           </a>
         </p>
         <button onClick={getContractStatus}>Get contract status</button>

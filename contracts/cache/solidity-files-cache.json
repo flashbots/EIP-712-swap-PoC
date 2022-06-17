@@ -35,7 +35,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [],
@@ -72,7 +75,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [],
@@ -109,7 +115,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [
@@ -148,7 +157,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [
@@ -193,7 +205,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [],
@@ -230,7 +245,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [
@@ -269,7 +287,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [],
@@ -306,7 +327,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [],
@@ -343,7 +367,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [],
@@ -380,7 +407,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [],
@@ -417,7 +447,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [
@@ -458,7 +491,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [
@@ -510,7 +546,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [],
@@ -547,7 +586,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [],
@@ -584,7 +626,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [],
@@ -596,8 +641,8 @@
       }
     },
     "/home/dev/code/eip-712-poc/contracts/src/SonOfASwap.sol": {
-      "lastModificationDate": 1655339091216,
-      "contentHash": "aa221384b51c34e58deb48e2897ab549",
+      "lastModificationDate": 1655420469400,
+      "contentHash": "3ce6a93a9f3fc48ef36b0efeacdc53ce",
       "sourceName": "src/SonOfASwap.sol",
       "solcConfig": {
         "settings": {
@@ -621,7 +666,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [
@@ -642,10 +690,10 @@
         }
       }
     },
-    "/home/dev/code/eip-712-poc/contracts/test/Contract.t.sol": {
-      "lastModificationDate": 1655339658945,
-      "contentHash": "101fa8646989fa37cee7d065147f11be",
-      "sourceName": "test/Contract.t.sol",
+    "/home/dev/code/eip-712-poc/contracts/test/SonOfASwap.t.sol": {
+      "lastModificationDate": 1655503171274,
+      "contentHash": "82486df683fe0d7232ddc82f85fcc6a0",
+      "sourceName": "test/SonOfASwap.t.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
@@ -668,7 +716,10 @@
               ]
             }
           },
-          "evmVersion": "london"
+          "evmVersion": "london",
+          "debug": {
+            "revertStrings": "debug"
+          }
         }
       },
       "imports": [
@@ -689,10 +740,10 @@
         "lib/forge-std/src/console2.sol",
         "src/SonOfASwap.sol"
       ],
-      "versionRequirement": "^0.7",
+      "versionRequirement": "^0.7.6",
       "artifacts": {
         "ContractTest": {
-          "0.7.6+commit.7338295f.Linux.gcc": "Contract.t.sol/ContractTest.json"
+          "0.7.6+commit.7338295f.Linux.gcc": "SonOfASwap.t.sol/ContractTest.json"
         }
       }
     }
